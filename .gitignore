@@ -1,0 +1,19 @@
+### Build Artifacts ###
+/Debug/
+
+### Eclipse Files ###
+# User-specific files
+/.settings/language.settings.xml
+
+### Filesystem Cache Files ###
+/**/.DS_Store
+
+### Visual Studio Files ###
+# User-specific files
+*.suo
+*.user
+
+# Visual C++ cache files
+*.opendb
+*.VC.db
+*.VC.VC.opendb
