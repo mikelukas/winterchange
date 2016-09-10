@@ -107,9 +107,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ui\CursesWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\curseslib.h" />
+    <ClInclude Include="src\ui\CursesWindow.h" />
+    <ClInclude Include="src\ui\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
