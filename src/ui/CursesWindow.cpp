@@ -59,10 +59,28 @@ void CursesWindow::resize(int w, int h)
 	resize(w, h, currX, currY);
 }
 
-/** Resizes window and places top left corner at given (x, y) coords */
+/* Resizes window and places top left corner at given (x, y) coords */
 void CursesWindow::resize(int w, int h, int x, int y)
 {
 	wclrtobot(win);
 	initCursesWin(w, h, y, x);
 }
 
+/* Get X position (column number) of top-left corner of window. */
+int CursesWindow::getX() const
+{
+	return getbegx(win);
+}
+
+/* Get Y position (row number) of top-left corner of window. */
+int CursesWindow::getY() const
+{
+	return getbegy(win);
+}
+
+/* Moves top-left corner of window to be at given (x,y) aka (col, row) coords.*/
+void CursesWindow::move(int x, int y)
+{
+	move_panel(panel, y, x); //moving panel also moves its window
+	update_panels();
+}

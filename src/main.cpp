@@ -38,6 +38,12 @@ int windowFrameworkTest() {
 	doupdate();
 
 	getch(); //finish after another keypress
+
+	myWin->move(2, 10);
+	refresh();
+	doupdate();
+
+	getch();
 	endwin();
 
 	delete myWin;

@@ -27,9 +27,9 @@ class Window
 		virtual void resize(int w, int h) = 0;
 		virtual void resize(int w, int h, int x, int y) = 0;
 
-//		virtual int getX() const = 0;
-//		virtual int getY() const = 0;
-//		virtual void move(int x, int y) = 0;
+		virtual int getX() const = 0;
+		virtual int getY() const = 0;
+		virtual void move(int x, int y) = 0;
 //
 //		virtual const string& getTitle() const = 0;
 //		virtual void setTitle(const string&) = 0;

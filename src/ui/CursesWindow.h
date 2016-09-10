@@ -4,6 +4,9 @@
 #include <panel.h>
 #include "Window.h"
 
+/* Implementation of Window interface using ncurses/PDcurses to draw the window
+ * and manage its panel
+ */
 class CursesWindow : public Window
 {
 	protected:
@@ -23,6 +26,10 @@ class CursesWindow : public Window
 		virtual int getHeight() const;
 		virtual void resize(int w, int h);
 		virtual void resize(int w, int h, int x, int y);
+
+		virtual int getX() const;
+		virtual int getY() const;
+		virtual void move(int x, int y);
 };
 
 #endif
