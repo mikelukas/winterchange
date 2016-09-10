@@ -1,15 +1,48 @@
-#include <panel.h>
+#include "ui/CursesWindow.h"
 
 WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
 
+int windowFrameworkTest();
 int window_demo();
 int panel_basic_demo();
 
 int main(int argc, char *argv[])
 {
+	return windowFrameworkTest();
 	//return window_demo();
-	return panel_basic_demo();
+//	return panel_basic_demo();
+}
+
+int windowFrameworkTest() {
+	initscr();			/* Start curses mode 		*/
+	cbreak();			/* Line buffering disabled, Pass on
+					 * everty thing to me 		*/
+	keypad(stdscr, TRUE);		/* I need that nifty F1 */
+
+	//Create and show encapsulated curses window
+	Window* myWin = new CursesWindow(30, 30, 5, 5);
+	refresh();
+	doupdate();
+
+	getch(); //wait for keypress to resize
+
+	myWin->resize(20,20);
+	refresh();
+	doupdate();
+
+	getch(); //wait for keypress to resize and move
+
+	myWin->resize(10, 35, 2, 2);
+	refresh();
+	doupdate();
+
+	getch(); //finish after another keypress
+	endwin();
+
+	delete myWin;
+
+	return 0;
 }
 
 int window_demo() {
