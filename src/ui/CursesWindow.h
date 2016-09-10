@@ -14,8 +14,7 @@ class CursesWindow : public Window
 		WINDOW* win;
 		PANEL* panel;
 
-		void initCursesWin(int w, int h, int row, int col);
-		WINDOW* createWin(int w, int h, int row, int col);
+		void initCursesWin(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
 
 	public:
 		CursesWindow(int w, int h);

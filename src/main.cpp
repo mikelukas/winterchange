@@ -33,7 +33,7 @@ int windowFrameworkTest() {
 
 	getch(); //wait for keypress to resize and move
 
-	myWin->resize(10, 35, 2, 2);
+	myWin->resize(35, 10, 2, 2);
 	refresh();
 	doupdate();
 

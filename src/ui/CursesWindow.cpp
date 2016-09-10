@@ -4,23 +4,25 @@ CursesWindow::CursesWindow(int w, int h)
 	: win(NULL),
 	  panel(NULL)
 {
-	initCursesWin(w, h, 0, 0);
+	initCursesWin(h, w, 0, 0);
 }
 
 CursesWindow::CursesWindow(int w, int h, int x, int y)
 	: win(NULL),
 	  panel(NULL)
 {
-	initCursesWin(w, h, y, x); //curses likes y coord first
+	initCursesWin(h, w, y, x);
 }
 
-/* Create a curses window and panel w/ the given dimensions and absolute coords.
+/* NOTE: rows = height, cols = width, reverse of constructor
+ * Create a curses window and panel w/ the given dimensions and absolute coords.
  * Creates default border around the window.
  *
- * Does not draw the window, just updates the panel virtual screen.*/
-void CursesWindow::initCursesWin(int w, int h, int row, int col)
+ * Does not draw the window, just updates the panel virtual screen.
+ */
+void CursesWindow::initCursesWin(int rows, int cols, int row, int col)
 {
-	win = newwin(w, h, row, col);
+	win = newwin(rows, cols, row, col);
 	box(win, 0, 0); //0,0 is default board characters for horizontal and vertial lines
 
 	if(panel == NULL) {
@@ -63,7 +65,7 @@ void CursesWindow::resize(int w, int h)
 void CursesWindow::resize(int w, int h, int x, int y)
 {
 	wclrtobot(win);
-	initCursesWin(w, h, y, x);
+	initCursesWin(h, w, y, x);
 }
 
 /* Get X position (column number) of top-left corner of window. */
