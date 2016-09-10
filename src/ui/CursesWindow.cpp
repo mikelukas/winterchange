@@ -2,14 +2,16 @@
 
 CursesWindow::CursesWindow(int w, int h)
 	: win(NULL),
-	  panel(NULL)
+	  panel(NULL),
+	  title("")
 {
 	initCursesWin(h, w, 0, 0);
 }
 
 CursesWindow::CursesWindow(int w, int h, int x, int y)
 	: win(NULL),
-	  panel(NULL)
+	  panel(NULL),
+	  title("")
 {
 	initCursesWin(h, w, y, x);
 }
@@ -24,6 +26,7 @@ void CursesWindow::initCursesWin(int rows, int cols, int row, int col)
 {
 	win = newwin(rows, cols, row, col);
 	box(win, 0, 0); //0,0 is default board characters for horizontal and vertial lines
+	setTitle(title);
 
 	if(panel == NULL) {
 		panel = new_panel(win);
@@ -41,7 +44,7 @@ void CursesWindow::initCursesWin(int rows, int cols, int row, int col)
  */
 int CursesWindow::getWidth() const
 {
-	return getmaxy(win) - getbegy(win);
+	return getmaxx(win);
 }
 
 /* Calculates the height of the window by getting the max and beginning x, and
@@ -49,7 +52,7 @@ int CursesWindow::getWidth() const
  */
 int CursesWindow::getHeight() const
 {
-	return getmaxx(win) - getbegx(win);
+	return getmaxy(win);
 }
 
 /* Resizes relative to the current top left corner of window */
@@ -84,5 +87,52 @@ int CursesWindow::getY() const
 void CursesWindow::move(int x, int y)
 {
 	move_panel(panel, y, x); //moving panel also moves its window
+	update_panels();
+}
+
+/* Gets the current title set in the top of the window */
+const string& CursesWindow::getTitle() const
+{
+	return title;
+}
+
+/* Prints the given title string centered in the top border of the window, and
+ * updates title field tracked by this instance.
+ *
+ * Title is truncated if it is longer than the window width.
+ * */
+void CursesWindow::setTitle(const string& newTitle)
+{
+	int widthNoCorners = getWidth()-2; //-2 to avoid writing on corners
+
+	//clear old title if there was one
+	if(!title.empty())
+	{
+		mvwhline(win, 0, 1, 0, widthNoCorners); //0 for border char uses default char, x=1 to start after corner char
+	}
+
+	title = newTitle;
+
+	//Done drawing if new title is empty string;
+	if(newTitle.length() == 0)
+	{
+		update_panels(); //so that if we're clearing the title, the border gets updated
+		return;
+	}
+
+	//Truncate title if it is larger than window width
+	const string& displayedTitle = (newTitle.length() <= widthNoCorners) ? newTitle : newTitle.substr(0, widthNoCorners);
+
+	//overwrite border w/ new title
+	int textStartCol = (widthNoCorners - displayedTitle.length()) / 2; //truncate is OK; breaks ties by preferring the left-alignment
+	mvwprintw(win, 0, textStartCol+1, displayedTitle.c_str());
+
+	//Add horizontal lines one each side of title if there's room
+	if(displayedTitle.length() <= widthNoCorners-2)  //need at least 2 extra chars between corners, so widthNoCorners -2
+	{
+		mvwaddch(win, 0, textStartCol, ACS_RTEE);
+		mvwaddch(win, 0, textStartCol + displayedTitle.length() + 1, ACS_LTEE);
+	}
+
 	update_panels();
 }

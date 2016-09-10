@@ -22,21 +22,37 @@ int windowFrameworkTest() {
 
 	//Create and show encapsulated curses window
 	Window* myWin = new CursesWindow(30, 30, 5, 5);
+	myWin->setTitle("Winning");
 	doupdate();
 
 	getch(); //wait for keypress to resize
 
+	//Test resize, no move
 	myWin->resize(20,20);
 	doupdate();
 
 	getch(); //wait for keypress to resize and move
 
+	//Test resize, move
 	myWin->resize(35, 10, 2, 2);
 	doupdate();
 
 	getch(); //finish after another keypress
 
+	//Test just move
 	myWin->move(2, 10);
+	doupdate();
+
+	getch();
+
+	//Test resizing to size smaller than title
+	myWin->resize(5,5);
+	doupdate();
+
+	getch();
+
+	//Test clearing title
+	myWin->setTitle("");
 	doupdate();
 
 	getch();

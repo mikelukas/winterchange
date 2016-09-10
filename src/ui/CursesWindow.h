@@ -14,6 +14,8 @@ class CursesWindow : public Window
 		WINDOW* win;
 		PANEL* panel;
 
+		string title;
+
 		void initCursesWin(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
 
 	public:
@@ -29,6 +31,9 @@ class CursesWindow : public Window
 		virtual int getX() const;
 		virtual int getY() const;
 		virtual void move(int x, int y);
+
+		virtual const string& getTitle() const;
+		virtual void setTitle(const string&);
 };
 
 #endif

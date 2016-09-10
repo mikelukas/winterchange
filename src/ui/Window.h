@@ -30,10 +30,10 @@ class Window
 		virtual int getX() const = 0;
 		virtual int getY() const = 0;
 		virtual void move(int x, int y) = 0;
-//
-//		virtual const string& getTitle() const = 0;
-//		virtual void setTitle(const string&) = 0;
-//
+
+		virtual const string& getTitle() const = 0;
+		virtual void setTitle(const string&) = 0;
+
 //		virtual void fillWithText(const string&) = 0;
 //		virtual void appendText(const string&) = 0;
 //
