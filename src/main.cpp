@@ -76,13 +76,9 @@ int windowFrameworkTest() {
 
 	getch();
 
-	endwin();
-
 	delete myWin;
-	delete child1;
-	delete child2;
-	delete child3;
-	delete child4;
+
+	endwin();
 
 	return 0;
 }

@@ -25,6 +25,20 @@ CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
 	initCursesWin(h, w, y, x);
 }
 
+CursesWindow::~CursesWindow()
+{
+	//Destroy this Window's children (which will in turn call their destructors)
+	for(int i = 0; i < children.size(); i++)
+	{
+		delete children[i];
+	}
+	children.clear();
+
+	//Deallocate
+	del_panel(panel);
+	delwin(win);
+}
+
 /* NOTE: rows = height, cols = width, reverse of constructor
  * Create a curses window and panel w/ the given dimensions and absolute coords.
  * If the given coordinates are off-screen, they will each be adjusted to fall

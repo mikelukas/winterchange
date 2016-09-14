@@ -22,7 +22,7 @@ class CursesWindow : public Window
 		CursesWindow(int w, int h);
 		CursesWindow(int w, int h, int x, int y);
 		CursesWindow(Window* parent, int w, int h, int x, int y);
-		virtual ~CursesWindow() {}
+		virtual ~CursesWindow();
 
 		virtual int getWidth() const;
 		virtual int getHeight() const;
