@@ -19,9 +19,13 @@ int windowFrameworkTest() {
 	cbreak();			/* Line buffering disabled, Pass on
 					 * everty thing to me 		*/
 	keypad(stdscr, TRUE);		/* I need that nifty F1 */
+	noecho();
+
+	addstr("Press any key to start.");
+	getch();
 
 	//Create and show encapsulated curses window
-	Window* myWin = new CursesWindow(30, 30, 5, 5);
+	Window* myWin = new CursesWindow(30, 30, -10, -10);
 	myWin->setTitle("Winning");
 	doupdate();
 
@@ -56,9 +60,29 @@ int windowFrameworkTest() {
 	doupdate();
 
 	getch();
+
+	//Test child in top-left corner
+	myWin->resize(20,20, 5, 5);
+	myWin->setTitle("Parent");
+	Window* child1 = myWin->makeChildCentered(12, 12);
+	child1->setTitle("Child1");
+	Window* child2 = myWin->makeChildCentered(6, 100);
+	child2->setTitle("Child2");
+	Window* child3 = myWin->makeChildCentered(100, 6);
+	child3->setTitle("Child3");
+	Window* child4 = myWin->makeChild(11, 12, 19, 19);
+	child4->setTitle("Child4");
+	doupdate();
+
+	getch();
+
 	endwin();
 
 	delete myWin;
+	delete child1;
+	delete child2;
+	delete child3;
+	delete child4;
 
 	return 0;
 }

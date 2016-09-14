@@ -16,16 +16,31 @@ CursesWindow::CursesWindow(int w, int h, int x, int y)
 	initCursesWin(h, w, y, x);
 }
 
+CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
+	: Window(parent),
+	  win(NULL),
+	  panel(NULL),
+	  title("")
+{
+	initCursesWin(h, w, y, x);
+}
+
 /* NOTE: rows = height, cols = width, reverse of constructor
  * Create a curses window and panel w/ the given dimensions and absolute coords.
+ * If the given coordinates are off-screen, they will each be adjusted to fall
+ * on-screen.
  * Creates default border around the window.
  *
- * Does not draw the window, just updates the panel virtual screen.
+ * Does not update physical screen, just draws to the panel virtual screen.
  */
 void CursesWindow::initCursesWin(int rows, int cols, int row, int col)
 {
-	win = newwin(rows, cols, row, col);
-	box(win, 0, 0); //0,0 is default board characters for horizontal and vertial lines
+	//Ensure top-left corner is on-screen (newwin will fail otherwise).
+	int adjustedRow = constrainValue(row, 0, LINES-1);
+	int adjustedCol = constrainValue(col, 0, COLS-1);
+
+	win = newwin(rows, cols, adjustedRow, adjustedCol);
+	box(win, 0, 0); //0,0 is default border characters for horizontal and vertical lines
 	setTitle(title);
 
 	if(panel == NULL) {
@@ -67,8 +82,8 @@ void CursesWindow::resize(int w, int h)
 /* Resizes window and places top left corner at given (x, y) coords */
 void CursesWindow::resize(int w, int h, int x, int y)
 {
-	wclrtobot(win);
-	initCursesWin(h, w, y, x);
+	wclear(win);
+	initCursesWin(h, w, y, x); //TODO: use wresize instead, still replace panel, and update panels. do move in a separate move_panel step after resize, or don't allow new x,y at all
 }
 
 /* Get X position (column number) of top-left corner of window. */
@@ -135,4 +150,40 @@ void CursesWindow::setTitle(const string& newTitle)
 	}
 
 	update_panels();
+}
+
+/* Allocates a new CursesWindow with the given width and height, and its top
+ * left corner in the top left corner of the parent, within its borders. If this
+ * causes the child to appear off-screen, it will be moved to be on-screen.*/
+Window* CursesWindow::makeChild(int w, int h)
+{
+	return makeChild(w, h, 0, 0); //0,0 relative to parent content area
+}
+
+/* Allocates a new CursesWindow with the given width and height, and its top
+ * left corner set to center it relative to parent, within its borders.
+ * If centering would move the child's top-left corner off-screen, it will then
+ * be moved to be on screen.*/
+Window* CursesWindow::makeChildCentered(int w, int h)
+{
+	//ensure requested child size fits within parent borders
+	int parentW = getWidth()-2, parentH = getHeight()-2;
+
+	//Get centered child X,Y relative to parent content area
+	int childX = (parentW-w) / 2;
+	int childY = (parentH-h) / 2;
+
+	return makeChild(w, h, childX, childY);
+}
+
+/* Allocates a new CursesWindow with the given width and height, and its top
+ * left corner at position (x,y) relative to parent content area (i.e. within
+ * its borders).  If absolute (x,y) of child ends up off-screen, child is moved
+ * to appear on-screen.*/
+Window* CursesWindow::makeChild(int w, int h, int x, int y)
+{
+	Window* child = new CursesWindow(parent, w, h, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
+	children.push_back(child);
+
+	return child;
 }
