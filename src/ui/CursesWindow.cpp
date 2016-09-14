@@ -112,10 +112,16 @@ int CursesWindow::getY() const
 	return getbegy(win);
 }
 
-/* Moves top-left corner of window to be at given (x,y) aka (col, row) coords.*/
+/* Moves top-left corner of window to be at given (x,y) aka (col, row) coords.
+ * If new coords are out of bounds, adjusts them to the nearest point in bounds.
+ */
 void CursesWindow::move(int x, int y)
 {
-	move_panel(panel, y, x); //moving panel also moves its window
+	//Ensure window is moved to a point within bounds
+	int adjustedX = constrainValue(x, 0, COLS-1);
+	int adjustedY = constrainValue(y, 0, LINES-1);
+
+	move_panel(panel, adjustedY, adjustedX); //moving panel also moves its window
 	update_panels();
 }
 

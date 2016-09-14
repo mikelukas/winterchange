@@ -43,12 +43,6 @@ int windowFrameworkTest() {
 
 	getch(); //finish after another keypress
 
-	//Test just move
-	myWin->move(2, 10);
-	doupdate();
-
-	getch();
-
 	//Test resizing to size smaller than title
 	myWin->resize(5,5);
 	doupdate();
@@ -57,6 +51,20 @@ int windowFrameworkTest() {
 
 	//Test clearing title
 	myWin->setTitle("");
+	doupdate();
+
+	getch();
+
+	//Test just move
+	myWin->move(2, 10);
+	myWin->setTitle("Move");
+	doupdate();
+
+	getch();
+
+	//Test move out of bounds
+	myWin->move(-2, 10);
+	myWin->setTitle("OOB");
 	doupdate();
 
 	getch();
