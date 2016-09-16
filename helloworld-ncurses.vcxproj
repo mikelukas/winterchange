@@ -108,6 +108,7 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ui\CursesWindow.cpp" />
+    <ClCompile Include="src\ui\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\curseslib.h" />
