@@ -53,7 +53,20 @@ void CursesWindow::initCursesWin(int rows, int cols, int row, int col)
 	int adjustedRow = constrainValue(row, 0, LINES-1);
 	int adjustedCol = constrainValue(col, 0, COLS-1);
 
-	win = newwin(rows, cols, adjustedRow, adjustedCol);
+	//Ensure window fits within screen
+	int adjustedRows = constrainValue(rows, 0, LINES); //0 is allowed because curses interprets it as full-screen.
+	int adjustedCols = constrainValue(cols, 0, COLS);
+	if(adjustedRow + adjustedRows > LINES)
+	{
+		adjustedRows = LINES - adjustedRow;
+	}
+
+	if (adjustedCol + adjustedCols > COLS)
+	{
+		adjustedCols = COLS - adjustedCol;
+	}
+
+	win = newwin(adjustedRows, adjustedCols, adjustedRow, adjustedCol);
 	box(win, 0, 0); //0,0 is default border characters for horizontal and vertical lines
 	setTitle(title);
 
