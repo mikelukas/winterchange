@@ -220,3 +220,110 @@ Window* CursesWindow::makeChild(int w, int h, int x, int y)
 
 	return child;
 }
+
+/* Fills the window's content area, + the given margins, with the given text,
+ * wrapping text at words if it is too large for the content area.
+ *
+ * If the given margins are invalid (negative, or too large such that there is
+ * no area for text), returns without doing anything.
+ */
+void CursesWindow::fillWithText(const string& text, int marginT, int marginB, int marginL, int marginR)
+{
+	if(marginT < 0 || marginB < 0 || marginL < 0 || marginR < 0)
+	{
+		return;
+	}
+	if(marginT + marginB > getHeight() || marginL + marginR > getWidth())
+	{
+		return;
+	}
+
+	int adjustedW = getWidth()-2 - marginL - marginR;
+	int adjustedH = getHeight()-2 - marginT - marginB;
+	int startRow = 1 + marginT;
+	int startCol = 1 + marginL;
+	int maxRow = startRow + adjustedH;
+	int maxCol = startCol + adjustedW;
+
+	int wordStart = 0;
+
+	wmove(win, startRow, startCol); //+1 to start w/i border
+	for(int i = 0; i < text.length(); i++)
+	{
+		if(!isWhitespaceChar(text[i]) && i+1 != text.length()) { //latter test will cause the last word to be flushed if we don't hit another whitespace char as the last char in the text
+ 			continue; //Only take action when we hit white space
+		}
+
+		int curRow, curCol;
+		getyx(win, curRow, curCol);
+
+		//Write-out word
+		int wordSize = i-wordStart;
+		if(curCol + wordSize > maxCol) {
+			if(wordSize < adjustedW) {
+				//Advance cursor to next line before continuing to draw the word
+				curRow++;
+				curCol = startCol;
+				if(curRow >= maxRow) {
+					return; //abort if we're at the bottom of content area
+				}
+				wmove(win, curRow, curCol);
+			}
+
+			int remainingLineW;
+			while(wordSize > adjustedW) {
+				remainingLineW = maxCol - curCol;
+				for(int j = wordStart; j < (wordStart + remainingLineW); j++) {
+					waddch(win, text[j]);
+				}
+
+				//Recalculate word start, size since we've now written part of it
+				wordStart += remainingLineW;
+				wordSize = i-wordStart;
+
+				//Advance cursor to next line before continuing to draw the word
+				curRow++;
+				curCol = startCol;
+				if(curRow >= maxRow) {
+					return; //abort if we're at the bottom of content area
+				}
+
+				wmove(win, curRow, curCol);
+			}
+
+			//Write remaining
+			for(int j = wordStart; j < i; j++) {
+				waddch(win, text[j]);
+			}
+		} else {
+			for(int j = wordStart; j < i; j++) {
+				waddch(win, text[j]);
+			}
+		}
+
+		//reset word start position
+		wordStart = i + 1;
+
+		getyx(win, curRow, curCol);
+
+		//Check if we need to move to a new line instead of drawing whitespace
+		if(curCol >= maxCol-1 //-1 since a space at the end of the line also should advance to the next one
+		|| text[i] == '\n' //don't want to draw \n because it will clear border
+		|| (text[i] == '\t' && maxCol - curCol < TABSIZE)) //don't want to draw tab that is big enough to overwrite border
+		{
+			curRow +=1;
+			curCol = startCol;
+			wmove(win, curRow, curCol);
+		}
+		else
+		{
+			//draw whitespace char if it doesn't put us out of bounds
+			waddch(win, text[i]);
+		}
+		if(curRow >= maxRow) {
+			return;
+		}
+	}
+
+	update_panels();
+}

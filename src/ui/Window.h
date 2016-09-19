@@ -33,7 +33,8 @@ class Window
 		virtual const string& getTitle() const = 0;
 		virtual void setTitle(const string&) = 0;
 
-//		virtual void fillWithText(const string&) = 0;
+		virtual void fillWithText(const string&);
+		virtual void fillWithText(const string&, int marginT, int marginB, int marginL, int marginR) = 0;
 //		virtual void appendText(const string&) = 0;
 
 		virtual Window* makeChild(int w, int h) = 0; //adds child at 0,0 relative to this window's top-left corner
@@ -45,5 +46,6 @@ class Window
 
 bool isWithinBounds(int x, int y, int minX, int minY, int maxX, int maxY);
 int constrainValue(int value, int min, int max);
+bool isWhitespaceChar(char);
 
 #endif

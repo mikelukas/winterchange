@@ -1,5 +1,10 @@
 #include "Window.h"
 
+void Window::fillWithText(const string& text)
+{
+	fillWithText(text, 0,0,0,0);
+}
+
 /* returns true if the given x, y values fall within ALL of the given min and
  * max values for their respective dimensions, false otherwise.
  */
@@ -23,4 +28,20 @@ int constrainValue(int value, int min, int max)
 	}
 
 	return value;
+}
+
+/* returns true if c is: ' ', \t, \n, \f, \r, and false otherwise */
+bool isWhitespaceChar(char c)
+{
+	switch(c)
+	{
+	case ' ':
+	case '\t':
+	case '\n':
+	case '\r':
+	case '\f':
+		return true;
+	default:
+		return false;
+	}
 }

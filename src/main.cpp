@@ -29,6 +29,12 @@ int windowFrameworkTest() {
 	myWin->setTitle("Winning");
 	doupdate();
 
+	getch();
+
+	//Test that that filling with some text lays out properly within horizontal bounds, with margins
+	myWin->fillWithText("01234 6789 123 567 9 123 5 789. 2345 789012345 789012345678901234567890_2345678901234567 90\n\n0123 56\t89 1234\t6789", 4, 4, 4, 4);
+	doupdate();
+
 	getch(); //wait for keypress to resize
 
 	//Test resize, no move
@@ -45,6 +51,12 @@ int windowFrameworkTest() {
 
 	//Test resizing to size smaller than title
 	myWin->resize(5,5);
+	doupdate();
+
+	getch();
+
+	//test that text lays out properly w/i vertical bounds and stops when it can't fit in window any longer
+	myWin->fillWithText("01234 6 8 0 2 4 6");
 	doupdate();
 
 	getch();
