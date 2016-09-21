@@ -14,7 +14,13 @@ class CursesWindow : public Window
 		WINDOW* win;
 		PANEL* panel;
 
+		int paddingT;
+		int paddingB;
+		int paddingL;
+		int paddingR;
+
 		string title;
+		string content;
 
 		void initCursesWin(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
 
@@ -36,7 +42,13 @@ class CursesWindow : public Window
 		virtual const string& getTitle() const;
 		virtual void setTitle(const string&);
 
-		virtual void fillWithText(const string&, int marginT, int marginB, int marginL, int marginR);
+		virtual void setPadding(int top, int bottom, int left, int right);
+		virtual void setPaddingTop(int);
+		virtual void setPaddingBottom(int);
+		virtual void setPaddingLeft(int);
+		virtual void setPaddingRight(int);
+		virtual void clearContent();
+		virtual void fillWithText(const string&);
 //		virtual void appendText(const string&);
 
 		virtual Window* makeChild(int w, int h); //adds child at 0,0 relative to this window's top-left corner

@@ -1,10 +1,5 @@
 #include "Window.h"
 
-void Window::fillWithText(const string& text)
-{
-	fillWithText(text, 0,0,0,0);
-}
-
 /* returns true if the given x, y values fall within ALL of the given min and
  * max values for their respective dimensions, false otherwise.
  */

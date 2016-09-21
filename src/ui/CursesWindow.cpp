@@ -221,27 +221,95 @@ Window* CursesWindow::makeChild(int w, int h, int x, int y)
 	return child;
 }
 
-/* Fills the window's content area, + the given margins, with the given text,
- * wrapping text at words if it is too large for the content area.
- *
- * If the given margins are invalid (negative, or too large such that there is
- * no area for text), returns without doing anything.
+/* Set all padding for conteint, in rows/cols. Padding values given must be >= 0
+ * otherwise they will be ignored
  */
-void CursesWindow::fillWithText(const string& text, int marginT, int marginB, int marginL, int marginR)
+void CursesWindow::setPadding(int top, int bottom, int left, int right)
 {
-	if(marginT < 0 || marginB < 0 || marginL < 0 || marginR < 0)
-	{
-		return;
-	}
-	if(marginT + marginB > getHeight() || marginL + marginR > getWidth())
-	{
+	setPaddingTop(top);
+	setPaddingBottom(bottom);
+	setPaddingLeft(left);
+	setPaddingRight(right);
+}
+
+/* Set top padding for content, in rows. Padding value given must be >= 0,
+ * otherwise it will be ignored.
+ */
+void CursesWindow::setPaddingTop(int paddingT)
+{
+	if(paddingT < 0) {
 		return;
 	}
 
-	int adjustedW = getWidth()-2 - marginL - marginR;
-	int adjustedH = getHeight()-2 - marginT - marginB;
-	int startRow = 1 + marginT;
-	int startCol = 1 + marginL;
+	this->paddingT = paddingT;
+}
+
+/* Set bottom padding for content, in rows. Padding value given must be >= 0,
+ * otherwise it will be ignored.
+ */
+void CursesWindow::setPaddingBottom(int paddingB)
+{
+	if(paddingB < 0) {
+		return;
+	}
+
+	this->paddingB = paddingB;
+}
+
+/* Set left padding for content, in rows. Padding value given must be >= 0,
+ * otherwise it will be ignored.
+ */
+void CursesWindow::setPaddingLeft(int paddingL)
+{
+	if(paddingL < 0) {
+		return;
+	}
+
+	this->paddingL = paddingL;
+}
+
+/* Set right padding for content, in rows. Padding value given must be >= 0,
+ * otherwise it will be ignored.
+ */
+void CursesWindow::setPaddingRight(int paddingR)
+{
+	if(paddingR < 0) {
+		return;
+	}
+
+	this->paddingR = paddingR;
+}
+
+/** Overwrites entire content area of window (area within borders) with spaces*/
+void CursesWindow::clearContent()
+{
+	for(int row = 1; row < getHeight()-1; row++)
+	{
+		mvwhline(win, row, 1, ' ', getWidth()-2);
+	}
+
+	update_panels();
+}
+
+/* Fills the window's content area with the given text accounting for padding,
+ * wrapping text at words if it is too large for the content area.
+ *
+ * If the padding is invalid (negative, or too large such that there is no area
+ * for text), clears content area and returns, and still saves given text.
+ */
+void CursesWindow::fillWithText(const string& text)
+{
+	content = text;
+	if(paddingT + paddingB > getHeight() || paddingL + paddingR > getWidth())
+	{
+		clearContent();
+		return;
+	}
+
+	int adjustedW = getWidth()-2 - paddingL - paddingR;
+	int adjustedH = getHeight()-2 - paddingT - paddingB;
+	int startRow = 1 + paddingT;
+	int startCol = 1 + paddingL;
 	int maxRow = startRow + adjustedH;
 	int maxCol = startCol + adjustedW;
 
@@ -265,6 +333,7 @@ void CursesWindow::fillWithText(const string& text, int marginT, int marginB, in
 				curRow++;
 				curCol = startCol;
 				if(curRow >= maxRow) {
+					update_panels();
 					return; //abort if we're at the bottom of content area
 				}
 				wmove(win, curRow, curCol);
@@ -285,6 +354,7 @@ void CursesWindow::fillWithText(const string& text, int marginT, int marginB, in
 				curRow++;
 				curCol = startCol;
 				if(curRow >= maxRow) {
+					update_panels();
 					return; //abort if we're at the bottom of content area
 				}
 
@@ -321,6 +391,7 @@ void CursesWindow::fillWithText(const string& text, int marginT, int marginB, in
 			waddch(win, text[i]);
 		}
 		if(curRow >= maxRow) {
+			update_panels();
 			return;
 		}
 	}

@@ -33,8 +33,13 @@ class Window
 		virtual const string& getTitle() const = 0;
 		virtual void setTitle(const string&) = 0;
 
-		virtual void fillWithText(const string&);
-		virtual void fillWithText(const string&, int marginT, int marginB, int marginL, int marginR) = 0;
+		virtual void setPadding(int top, int bottom, int left, int right) = 0;
+		virtual void setPaddingTop(int) = 0;
+		virtual void setPaddingBottom(int) = 0;
+		virtual void setPaddingLeft(int) = 0;
+		virtual void setPaddingRight(int) = 0;
+		virtual void clearContent() = 0;
+		virtual void fillWithText(const string&) = 0;
 //		virtual void appendText(const string&) = 0;
 
 		virtual Window* makeChild(int w, int h) = 0; //adds child at 0,0 relative to this window's top-left corner
