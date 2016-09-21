@@ -32,7 +32,7 @@ int windowFrameworkTest() {
 	getch();
 
 	//Test that that filling with some text lays out properly within horizontal bounds, with margins
-	myWin->setPadding(4, 4, 4, 4);
+	myWin->setPadding(3, 3, 3, 3);
 	myWin->fillWithText("01234 6789 123 567 9 123 5 789. 2345 789012345 789012345678901234567890_2345678901234567 90\n\n0123 56\t89 1234\t6789");
 	doupdate();
 

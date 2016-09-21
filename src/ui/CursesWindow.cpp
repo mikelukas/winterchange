@@ -111,6 +111,7 @@ void CursesWindow::resize(int w, int h, int x, int y)
 {
 	wclear(win);
 	initCursesWin(h, w, y, x); //TODO: use wresize instead, still replace panel, and update panels. do move in a separate move_panel step after resize, or don't allow new x,y at all
+	fillWithText(content);
 }
 
 /* Get X position (column number) of top-left corner of window. */
@@ -300,7 +301,7 @@ void CursesWindow::clearContent()
 void CursesWindow::fillWithText(const string& text)
 {
 	content = text;
-	if(paddingT + paddingB > getHeight() || paddingL + paddingR > getWidth())
+	if(paddingT + paddingB > getHeight()-2 || paddingL + paddingR > getWidth()-2)
 	{
 		clearContent();
 		return;
