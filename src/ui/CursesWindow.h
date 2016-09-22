@@ -23,6 +23,7 @@ class CursesWindow : public Window
 		string content;
 
 		void initCursesWin(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
+		virtual void clearContent(int, int);
 
 	public:
 		CursesWindow(int w, int h);

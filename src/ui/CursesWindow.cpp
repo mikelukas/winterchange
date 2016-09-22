@@ -284,9 +284,17 @@ void CursesWindow::setPaddingRight(int paddingR)
 /** Overwrites entire content area of window (area within borders) with spaces*/
 void CursesWindow::clearContent()
 {
-	for(int row = 1; row < getHeight()-1; row++)
+	clearContent(1, 1);
+}
+
+/** Overwrites content area of window (area within borders) with spaces,
+ * starting from the given coordinates onward (inclusive).*/
+void CursesWindow::clearContent(int startRow, int startCol)
+{
+	mvwhline(win, startRow++, startCol, ' ', getWidth()-1-startCol); //first row may not be a full row based on off-set, so clear it to the border (hence -1)
+	for(int row = startRow; row < getHeight()-1; row++)
 	{
-		mvwhline(win, row, 1, ' ', getWidth()-2);
+		mvwhline(win, row, 1, ' ', getWidth()-2); //-2 here instead of -1 like before, b/c the above is -1-startCol, and -2 = -1-1, which matches the -1-startCol formula since the first -1 is for the border, and second is because we're starting drawing at 1 (i.e. startCol = 1)
 	}
 
 	update_panels();
@@ -317,13 +325,14 @@ void CursesWindow::fillWithText(const string& text)
 	int wordStart = 0;
 
 	wmove(win, startRow, startCol); //+1 to start w/i border
+
+	int curRow, curCol;
 	for(int i = 0; i < text.length(); i++)
 	{
 		if(!isWhitespaceChar(text[i]) && i+1 != text.length()) { //latter test will cause the last word to be flushed if we don't hit another whitespace char as the last char in the text
  			continue; //Only take action when we hit white space
 		}
 
-		int curRow, curCol;
 		getyx(win, curRow, curCol);
 
 		//Write-out word
@@ -396,6 +405,10 @@ void CursesWindow::fillWithText(const string& text)
 			return;
 		}
 	}
+
+	//Fill rest of window with spaces to clear out any previous content
+	getyx(win, curRow, curCol);
+	clearContent(curRow, curCol);
 
 	update_panels();
 }

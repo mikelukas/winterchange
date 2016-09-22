@@ -63,6 +63,13 @@ int windowFrameworkTest() {
 
 	getch();
 
+	//test filling with shorter text than previous text does not leave any previous text behind
+	myWin->setPadding(0, 0, 0, 0);
+	myWin->fillWithText("abcde");
+	doupdate();
+
+	getch();
+
 	//test that changing padding to be too large for any text clears text
 	myWin->setPadding(50, 50, 50, 50);
 	myWin->fillWithText("01234 6 8 0 2 4 6");
