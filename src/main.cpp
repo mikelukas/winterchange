@@ -36,19 +36,31 @@ int windowFrameworkTest() {
 	myWin->replaceText("01234 6789 123 567 9 123 5 789. 2345 789012345 789012345678901234567890_2345678901234567 90\n\n0123 56\t89 1234\t6789");
 	doupdate();
 
-	getch(); //wait for keypress to resize
+	getch();
+
+	//Test that text can be appended to the previous content
+	myWin->appendText("abc de fghi.");
+	doupdate();
+
+	getch();
+
+	//Test that appended text can be put on new line if desired.
+	myWin->appendText("j klmop qrs.", true);
+	doupdate();
+
+	getch();
 
 	//Test resize, no move
 	myWin->resize(20,20);
 	doupdate();
 
-	getch(); //wait for keypress to resize and move
+	getch();
 
 	//Test resize, move
 	myWin->resize(35, 10, 2, 2);
 	doupdate();
 
-	getch(); //finish after another keypress
+	getch();
 
 	//Test resizing to size smaller than title
 	myWin->resize(5,5);
@@ -59,6 +71,13 @@ int windowFrameworkTest() {
 	//test that text lays out properly w/i vertical bounds and stops when it can't fit in window any longer
 	myWin->setPadding(0, 0, 0, 0);
 	myWin->replaceText("01234 6 8 0 2 4 6");
+	doupdate();
+
+	getch();
+
+	//test behavior appending text when there's no room for it
+	myWin->setPadding(0, 0, 0, 0);
+	myWin->appendText("8 0 234 658");
 	doupdate();
 
 	getch();

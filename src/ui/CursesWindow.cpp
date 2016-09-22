@@ -321,8 +321,8 @@ void CursesWindow::clearContent(int startRow, int startCol)
 	update_panels();
 }
 
-/* Saves the current cursor position as the next position at which fillWithText
- * will write.*/
+/* Saves the current cursor position RELATIVE TO PADDING as the next position at
+ * which fillWithText will write.*/
 void CursesWindow::saveNextWriteCoords()
 {
 	int curRow, curCol;
@@ -330,12 +330,12 @@ void CursesWindow::saveNextWriteCoords()
 	saveNextWriteCoords(curRow, curCol);
 }
 
-/* Saves the given coordinates as the next position at which fillWithText will
- * write.*/
+/* Saves the given coordinates RELATIVE TO PADDING as the next position at which
+ * fillWithText will write when appending text.*/
 void CursesWindow::saveNextWriteCoords(int row, int col)
 {
-	nextWriteRow = row;
-	nextWriteCol = col;
+	nextWriteRow = row-paddingT;
+	nextWriteCol = col-paddingL;
 }
 
 /* Fills the window's content area with the given text accounting for padding,
@@ -355,14 +355,27 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 
 	int adjustedW = getWidth()-2 - paddingL - paddingR;
 	int adjustedH = getHeight()-2 - paddingT - paddingB;
+
+	//Extents of content area after applying padding.
+	int firstRow = 1 + paddingT; //+1 to start w/i border
+	int firstCol = 1 + paddingL;
+	int maxRow = firstRow + adjustedH;
+	int maxCol = firstCol + adjustedW;
+
+	//Position to actually start writing at
 	int startRow = offsetRow + paddingT;
 	int startCol = offsetCol + paddingL;
-	int maxRow = startRow + adjustedH;
-	int maxCol = startCol + adjustedW;
+
+	//Don't write anything if we're going to write out of bounds, though save coords for good measure for subsequent append calls
+	if(startRow >= maxRow)
+	{
+		saveNextWriteCoords(startRow, startCol);
+		return;
+	}
 
 	int wordStart = 0;
 
-	wmove(win, startRow, startCol); //+1 to start w/i border
+	wmove(win, startRow, startCol);
 
 	int curRow, curCol;
 	for(int i = 0; i < text.length(); i++)
@@ -379,7 +392,7 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 			if(wordSize < adjustedW) {
 				//Advance cursor to next line before continuing to draw the word
 				curRow++;
-				curCol = startCol;
+				curCol = firstCol;
 				if(curRow >= maxRow) {
 					saveNextWriteCoords();
 					update_panels();
@@ -401,7 +414,7 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 
 				//Advance cursor to next line before continuing to draw the word
 				curRow++;
-				curCol = startCol;
+				curCol = firstCol;
 				if(curRow >= maxRow) {
 					saveNextWriteCoords();
 					update_panels();
@@ -432,7 +445,7 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 		|| (text[i] == '\t' && maxCol - curCol < TABSIZE)) //don't want to draw tab that is big enough to overwrite border
 		{
 			curRow +=1;
-			curCol = startCol;
+			curCol = firstCol;
 			wmove(win, curRow, curCol);
 		}
 		else
@@ -462,4 +475,21 @@ void CursesWindow::replaceText(const string& text)
 {
 	content = text;
 	fillWithText(text, 1, 1);
+}
+
+/* Adds text to the content area at the next available position for writing
+ * after the existing content.*/
+void CursesWindow::appendText(const string& text)
+{
+	appendText(text, false);
+}
+
+/* Adds text to the content area at the next available position for writing
+ * after the existing content, optionally starting on a new line after that
+ * content if newline is true.*/
+void CursesWindow::appendText(const string& text, bool newline)
+{
+	string textToWrite = (newline ? "\n" + text : text); //need to make a new string since text is a const
+	content += textToWrite;
+	fillWithText(textToWrite, nextWriteRow, nextWriteCol);
 }

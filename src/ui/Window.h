@@ -40,7 +40,8 @@ class Window
 		virtual void setPaddingRight(int) = 0;
 		virtual void clearContent() = 0;
 		virtual void replaceText(const string&) = 0;
-//		virtual void appendText(const string&) = 0;
+		virtual void appendText(const string&) = 0;
+		virtual void appendText(const string&, bool newline) = 0;
 
 		virtual Window* makeChild(int w, int h) = 0; //adds child at 0,0 relative to this window's top-left corner
 		virtual Window* makeChildCentered(int w, int h) = 0;

@@ -59,7 +59,8 @@ class CursesWindow : public Window
 		virtual void clearContent();
 
 		virtual void replaceText(const string&);
-//		virtual void appendText(const string&);
+		virtual void appendText(const string&);
+		virtual void appendText(const string&, bool newLine);
 
 		virtual Window* makeChild(int w, int h); //adds child at 0,0 relative to this window's top-left corner
 		virtual Window* makeChildCentered(int w, int h);
