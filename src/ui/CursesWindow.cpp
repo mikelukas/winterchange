@@ -3,7 +3,14 @@
 CursesWindow::CursesWindow(int w, int h)
 	: win(NULL),
 	  panel(NULL),
-	  title("")
+	  paddingT(0),
+	  paddingB(0),
+	  paddingL(0),
+	  paddingR(0),
+	  nextWriteRow(0),
+	  nextWriteCol(0),
+	  title(""),
+	  content("")
 {
 	initCursesWin(h, w, 0, 0);
 }
@@ -11,7 +18,14 @@ CursesWindow::CursesWindow(int w, int h)
 CursesWindow::CursesWindow(int w, int h, int x, int y)
 	: win(NULL),
 	  panel(NULL),
-	  title("")
+	  paddingT(0),
+	  paddingB(0),
+	  paddingL(0),
+	  paddingR(0),
+	  nextWriteRow(0),
+	  nextWriteCol(0),
+	  title(""),
+	  content("")
 {
 	initCursesWin(h, w, y, x);
 }
@@ -20,7 +34,14 @@ CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
 	: Window(parent),
 	  win(NULL),
 	  panel(NULL),
-	  title("")
+	  paddingT(0),
+	  paddingB(0),
+	  paddingL(0),
+	  paddingR(0),
+	  nextWriteRow(0),
+	  nextWriteCol(0),
+	  title(""),
+	  content("")
 {
 	initCursesWin(h, w, y, x);
 }
@@ -111,7 +132,7 @@ void CursesWindow::resize(int w, int h, int x, int y)
 {
 	wclear(win);
 	initCursesWin(h, w, y, x); //TODO: use wresize instead, still replace panel, and update panels. do move in a separate move_panel step after resize, or don't allow new x,y at all
-	fillWithText(content);
+	replaceText(content);
 }
 
 /* Get X position (column number) of top-left corner of window. */
@@ -300,25 +321,42 @@ void CursesWindow::clearContent(int startRow, int startCol)
 	update_panels();
 }
 
+/* Saves the current cursor position as the next position at which fillWithText
+ * will write.*/
+void CursesWindow::saveNextWriteCoords()
+{
+	int curRow, curCol;
+	getyx(win, curRow, curCol);
+	saveNextWriteCoords(curRow, curCol);
+}
+
+/* Saves the given coordinates as the next position at which fillWithText will
+ * write.*/
+void CursesWindow::saveNextWriteCoords(int row, int col)
+{
+	nextWriteRow = row;
+	nextWriteCol = col;
+}
+
 /* Fills the window's content area with the given text accounting for padding,
  * wrapping text at words if it is too large for the content area.
  *
  * If the padding is invalid (negative, or too large such that there is no area
  * for text), clears content area and returns, and still saves given text.
  */
-void CursesWindow::fillWithText(const string& text)
+void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol)
 {
-	content = text;
 	if(paddingT + paddingB > getHeight()-2 || paddingL + paddingR > getWidth()-2)
 	{
+		saveNextWriteCoords(1,1);
 		clearContent();
 		return;
 	}
 
 	int adjustedW = getWidth()-2 - paddingL - paddingR;
 	int adjustedH = getHeight()-2 - paddingT - paddingB;
-	int startRow = 1 + paddingT;
-	int startCol = 1 + paddingL;
+	int startRow = offsetRow + paddingT;
+	int startCol = offsetCol + paddingL;
 	int maxRow = startRow + adjustedH;
 	int maxCol = startCol + adjustedW;
 
@@ -343,6 +381,7 @@ void CursesWindow::fillWithText(const string& text)
 				curRow++;
 				curCol = startCol;
 				if(curRow >= maxRow) {
+					saveNextWriteCoords();
 					update_panels();
 					return; //abort if we're at the bottom of content area
 				}
@@ -364,6 +403,7 @@ void CursesWindow::fillWithText(const string& text)
 				curRow++;
 				curCol = startCol;
 				if(curRow >= maxRow) {
+					saveNextWriteCoords();
 					update_panels();
 					return; //abort if we're at the bottom of content area
 				}
@@ -401,14 +441,25 @@ void CursesWindow::fillWithText(const string& text)
 			waddch(win, text[i]);
 		}
 		if(curRow >= maxRow) {
+			saveNextWriteCoords();
 			update_panels();
 			return;
 		}
 	}
 
-	//Fill rest of window with spaces to clear out any previous content
+	//Before clearing any remaining existing content, save current coords, since clearing will move cursor position
 	getyx(win, curRow, curCol);
+	saveNextWriteCoords(curRow, curCol);
+
+	//Fill rest of window with spaces to clear out any previous content
 	clearContent(curRow, curCol);
 
 	update_panels();
+}
+
+/* Overwrites all text in the content area with the given text.*/
+void CursesWindow::replaceText(const string& text)
+{
+	content = text;
+	fillWithText(text, 1, 1);
 }

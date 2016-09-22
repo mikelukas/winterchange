@@ -33,7 +33,7 @@ int windowFrameworkTest() {
 
 	//Test that that filling with some text lays out properly within horizontal bounds, with margins
 	myWin->setPadding(3, 3, 3, 3);
-	myWin->fillWithText("01234 6789 123 567 9 123 5 789. 2345 789012345 789012345678901234567890_2345678901234567 90\n\n0123 56\t89 1234\t6789");
+	myWin->replaceText("01234 6789 123 567 9 123 5 789. 2345 789012345 789012345678901234567890_2345678901234567 90\n\n0123 56\t89 1234\t6789");
 	doupdate();
 
 	getch(); //wait for keypress to resize
@@ -58,21 +58,21 @@ int windowFrameworkTest() {
 
 	//test that text lays out properly w/i vertical bounds and stops when it can't fit in window any longer
 	myWin->setPadding(0, 0, 0, 0);
-	myWin->fillWithText("01234 6 8 0 2 4 6");
+	myWin->replaceText("01234 6 8 0 2 4 6");
 	doupdate();
 
 	getch();
 
 	//test filling with shorter text than previous text does not leave any previous text behind
 	myWin->setPadding(0, 0, 0, 0);
-	myWin->fillWithText("abcde");
+	myWin->replaceText("abcde");
 	doupdate();
 
 	getch();
 
 	//test that changing padding to be too large for any text clears text
 	myWin->setPadding(50, 50, 50, 50);
-	myWin->fillWithText("01234 6 8 0 2 4 6");
+	myWin->replaceText("01234 6 8 0 2 4 6");
 	doupdate();
 
 	getch();

@@ -19,11 +19,19 @@ class CursesWindow : public Window
 		int paddingL;
 		int paddingR;
 
+		int nextWriteRow;
+		int nextWriteCol;
+
 		string title;
 		string content;
 
 		void initCursesWin(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
+
 		virtual void clearContent(int, int);
+		virtual void fillWithText(const string&, int, int);
+
+		virtual void saveNextWriteCoords();
+		virtual void saveNextWriteCoords(int row, int col);
 
 	public:
 		CursesWindow(int w, int h);
@@ -49,7 +57,8 @@ class CursesWindow : public Window
 		virtual void setPaddingLeft(int);
 		virtual void setPaddingRight(int);
 		virtual void clearContent();
-		virtual void fillWithText(const string&);
+
+		virtual void replaceText(const string&);
 //		virtual void appendText(const string&);
 
 		virtual Window* makeChild(int w, int h); //adds child at 0,0 relative to this window's top-left corner
