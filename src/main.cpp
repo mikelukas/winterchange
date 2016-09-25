@@ -1,4 +1,5 @@
 #include "ui/CursesWindow.h"
+#include "ui/CursesWindowBuffer.h"
 
 WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
@@ -23,6 +24,35 @@ int windowFrameworkTest() {
 
 	addstr("Press any key to start.");
 	getch();
+
+	//Test buffer class can flush properly
+	WINDOW* buffWin = newwin(6, 6, 20, 20);
+	box(buffWin, 0, 0);
+
+	CursesWindowBuffer buffer(4, 4); //4,4 to allow for borders
+	buffer.writeAt('a', 0,0);
+	buffer.writeAt('b', 1,1);
+	buffer.writeAt('c', 2,2);
+	buffer.writeAt('d', 3,3);
+	buffer.flushTo(buffWin, 1,1);
+	wrefresh(buffWin);
+
+	getch();
+
+	//Test buffer class can expand
+	destroy_win(buffWin);
+
+	buffWin = newwin(12,12, 20, 20);
+	box(buffWin, 0,0);
+	buffer.writeAt('e', 4,4);
+	buffer.writeAt('f', 5,5);
+	buffer.writeAt('g', 6,6);
+	buffer.writeAt('h', 7,7);
+	buffer.flushTo(buffWin, 1,1);
+	wrefresh(buffWin);
+
+	getch();
+	destroy_win(buffWin);
 
 	//Create and show encapsulated curses window
 	Window* myWin = new CursesWindow(30, 30, -10, -10);
