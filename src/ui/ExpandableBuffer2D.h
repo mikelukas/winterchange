@@ -22,6 +22,8 @@ class ExpandableBuffer2D
 		ExpandableBuffer2D(int rows, int cols, T defaultVal);
 		virtual ~ExpandableBuffer2D();
 
+		virtual int getWidth() const;
+		virtual int getHeight() const;
 		virtual void writeAt(T, int row, int col);
 };
 

@@ -17,6 +17,18 @@ ExpandableBuffer2D<T>::~ExpandableBuffer2D()
 	delete[] buffer;
 }
 
+template <typename T>
+int ExpandableBuffer2D<T>::getWidth() const
+{
+	return cols;
+}
+
+template <typename T>
+int ExpandableBuffer2D<T>::getHeight() const
+{
+	return rows;
+}
+
 /* Writes the given content into the buffer at the given row,col coords. If the
  * coords fall outside of the buffer, the buffer size will be expanded first
  * to accommodate. See expand() for how expansion is performed.
