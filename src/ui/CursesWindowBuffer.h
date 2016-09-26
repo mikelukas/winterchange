@@ -12,7 +12,7 @@ class CursesWindowBuffer: public ExpandableBuffer2D<chtype>
 		CursesWindowBuffer(int rows, int cols);
 		virtual ~CursesWindowBuffer() {}
 
-		virtual void flushTo(WINDOW*, int offsetT, int offsetL);
+		virtual void flushTo(WINDOW*, int winStartRow, int winStartCol, int bufStartRow, int bufStartCol, int w, int h);
 };
 
 #endif
