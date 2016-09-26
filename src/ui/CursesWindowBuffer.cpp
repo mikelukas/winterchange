@@ -28,8 +28,7 @@ void CursesWindowBuffer::flushTo(WINDOW* win, int winStartRow, int winStartCol, 
 		rowOffset = row*cols;
 		for(col = bufStartCol; col < bufStartCol+numCols; col++)
 		{
-			chtype charToWrite = buffer[rowOffset + col];
-			waddch(win, charToWrite);//buffer[rowOffset + col]);
+			waddch(win, buffer[rowOffset + col]);
 		}
 
 		//If desired write w is more columns than we have left in the row, write default chars since we can't look up characters in the buffer anymore
