@@ -131,9 +131,9 @@ int windowFrameworkTest() {
 	child4->setTitle("Child4");
 	doupdate();
 
-	delete myWin;
-
 	getch();
+
+	delete myWin;
 
 	endwin();
 
