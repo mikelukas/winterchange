@@ -16,8 +16,6 @@ class ExpandableBuffer2D
 		T* buffer; //1D array of 2D content; will be of size rows x cols
 		T defaultVal;
 
-		virtual void expand();
-
 	public:
 		ExpandableBuffer2D(int rows, int cols, T defaultVal);
 		virtual ~ExpandableBuffer2D();
@@ -28,6 +26,8 @@ class ExpandableBuffer2D
 		virtual void writeAt(T, int row, int col);
 		virtual void clear();
 		virtual void clearFrom(int startRow, int startCol);
+
+		virtual void expand(int newRows, int newCols);
 };
 
 #include "ExpandableBuffer2D.cpp"

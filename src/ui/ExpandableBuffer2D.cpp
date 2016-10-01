@@ -31,14 +31,26 @@ int ExpandableBuffer2D<T>::getHeight() const
 
 /* Writes the given content into the buffer at the given row,col coords. If the
  * coords fall outside of the buffer, the buffer size will be expanded first
- * to accommodate. See expand() for how expansion is performed.
+ * to accommodate. Doubles buffer size in each dimension that needs expanded.
  */
 template <typename T>
 void ExpandableBuffer2D<T>::writeAt(T content, int row, int col)
 {
-	if(row > rows-1 || col > cols-1)
+	//check for resizing scenarios; only expand the dimension we need more room in
+	int newRows = rows, newCols = cols;
+	if(row > rows-1)
 	{
-		expand();
+		newRows = rows << 1; // << 1 == multiply by 2
+	}
+	if(col > cols-1)
+	{
+		newCols = cols << 1;
+	}
+
+	//Perform a resize if either of the dimensions needs expanded
+	if(newRows != rows || newCols != cols)
+	{
+		expand(newRows, newCols);
 	}
 
 	buffer[row*cols + col] = content;
@@ -68,14 +80,13 @@ void ExpandableBuffer2D<T>::clearFrom(int startRow, int startCol)
 	}
 }
 
-/* Doubles the buffer's dimensions. Creates the new buffer, copies everything
- * from the old one into the new one, then deallocates the old one.
+/* Creates a new buffer of the given size, and copies everything from the old
+ * one into the new one, then deallocates the old one.
  */
 template <typename T>
-void ExpandableBuffer2D<T>::expand()
+void ExpandableBuffer2D<T>::expand(int newRows, int newCols)
 {
 	//Make new buffer
-	int newRows = rows << 1, newCols = cols << 1; // << 1 == multiply by 2
 	T* newBuffer = new T[newRows * newCols];
 	std::fill(newBuffer, newBuffer + (newRows * newCols), defaultVal);
 

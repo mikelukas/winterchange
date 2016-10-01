@@ -5,6 +5,7 @@ WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
 
 int windowFrameworkTest();
+void bufferTests();
 int window_demo();
 int panel_basic_demo();
 
@@ -159,7 +160,7 @@ void bufferTests() {
 
 	buffWin = newwin(12,12, 20, 20);
 	box(buffWin, 0,0);
-	buffer.writeAt('e', 4,4);
+	buffer.writeAt('e', 3,4);
 	buffer.writeAt('f', 5,5);
 	buffer.writeAt('g', 6,6);
 	buffer.writeAt('h', 7,7);
