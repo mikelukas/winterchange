@@ -312,26 +312,17 @@ void CursesWindow::setPaddingRight(int paddingR)
 	this->paddingR = paddingR;
 }
 
-/** Overwrites entire content area of window (area within borders) with spaces*/
+/** Overwrites entire content area of window (area within borders) with spaces.
+ *  updates panels.
+ * */
 void CursesWindow::clearContent()
 {
-	clearContent(0, 0);
-}
-
-/** Overwrites content area of window (area within borders) with spaces,
- * starting from the given coordinates onward (inclusive).*/
-void CursesWindow::clearContent(int startRow, int startCol)
-{
-	int firstCol = startCol;
-	for(int row = startRow; row < getHeight()-1; row++)
+	for(int row = 1; row < getHeight()-1; row++)
 	{
-		for(int col = firstCol; col < getWidth()-1; col++)
-		{
-			buffer->writeAt(' ', row, col);
-		}
-
-		firstCol = 0;
+		mvwhline(win, row, 1, ' ', getWidth()-2); //line width is win width-2 b/c of 1 col for left and right borders
 	}
+
+	update_panels();
 }
 
 /* Saves the given coordinates as the next buffer position at which fillWithText
@@ -353,6 +344,7 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 	if(paddingT + paddingB > getHeight()-2 || paddingL + paddingR > getWidth()-2)
 	{
 		saveNextWriteCoords(0,0);
+		buffer->clear();
 		clearContent();
 		return;
 	}
@@ -441,7 +433,7 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 	saveNextWriteCoords(curRow, curCol);
 
 	//Fill rest of buffer with spaces to clear out any previous content
-	clearContent(curRow, curCol);
+	buffer->clearFrom(curRow, curCol);
 
 	flushBuffer();
 }

@@ -24,7 +24,10 @@ class ExpandableBuffer2D
 
 		virtual int getWidth() const;
 		virtual int getHeight() const;
+
 		virtual void writeAt(T, int row, int col);
+		virtual void clear();
+		virtual void clearFrom(int startRow, int startCol);
 };
 
 #include "ExpandableBuffer2D.cpp"

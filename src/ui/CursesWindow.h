@@ -30,7 +30,6 @@ class CursesWindow : public Window
 
 		void init(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
 
-		virtual void clearContent(int, int);
 		virtual void fillWithText(const string&, int, int);
 		virtual void flushBuffer();
 

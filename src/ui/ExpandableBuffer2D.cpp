@@ -8,7 +8,7 @@ ExpandableBuffer2D<T>::ExpandableBuffer2D(int rows, int cols, T defaultVal)
 	  defaultVal(defaultVal)
 {
 	buffer = new T[rows * cols];
-	std::fill(buffer, buffer + (rows * cols), defaultVal);
+	clear();
 }
 
 template <typename T>
@@ -42,6 +42,30 @@ void ExpandableBuffer2D<T>::writeAt(T content, int row, int col)
 	}
 
 	buffer[row*cols + col] = content;
+}
+
+/* Fills the entire buffer w/ defaultVal at every position */
+template <typename T>
+void ExpandableBuffer2D<T>::clear()
+{
+	std::fill(buffer, buffer + (rows * cols), defaultVal);
+}
+
+/* Fills the buffer w/ defaultVal at each position, starting at given row,col.
+ * Everything before these coordinates will be untouched.*/
+template <typename T>
+void ExpandableBuffer2D<T>::clearFrom(int startRow, int startCol)
+{
+	int firstCol = startCol;
+	for(int row = startRow; row < getHeight(); row++)
+	{
+		for(int col = firstCol; col < getWidth(); col++)
+		{
+			buffer[row*cols + col] = defaultVal;
+		}
+
+		firstCol = 0;
+	}
 }
 
 /* Doubles the buffer's dimensions. Creates the new buffer, copies everything
