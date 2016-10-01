@@ -254,7 +254,8 @@ Window* CursesWindow::makeChild(int w, int h, int x, int y)
 }
 
 /* Set all padding for conteint, in rows/cols. Padding values given must be >= 0
- * otherwise they will be ignored
+ * otherwise they will be ignored. refreshContent() must be called afterward
+ * unless resizing window or replacing current text afterward.
  */
 void CursesWindow::setPadding(int top, int bottom, int left, int right)
 {
@@ -265,7 +266,8 @@ void CursesWindow::setPadding(int top, int bottom, int left, int right)
 }
 
 /* Set top padding for content, in rows. Padding value given must be >= 0,
- * otherwise it will be ignored.
+ * otherwise it will be ignored. refreshContent() must be called afterward
+ * unless resizing window or replacing current text afterward.
  */
 void CursesWindow::setPaddingTop(int paddingT)
 {
@@ -277,7 +279,8 @@ void CursesWindow::setPaddingTop(int paddingT)
 }
 
 /* Set bottom padding for content, in rows. Padding value given must be >= 0,
- * otherwise it will be ignored.
+ * otherwise it will be ignored. refreshContent() must be called afterward
+ * unless resizing window or replacing current text afterward.
  */
 void CursesWindow::setPaddingBottom(int paddingB)
 {
@@ -289,7 +292,8 @@ void CursesWindow::setPaddingBottom(int paddingB)
 }
 
 /* Set left padding for content, in rows. Padding value given must be >= 0,
- * otherwise it will be ignored.
+ * otherwise it will be ignored. refreshContent() must be called afterward
+ * unless resizing window or replacing current text afterward.
  */
 void CursesWindow::setPaddingLeft(int paddingL)
 {
@@ -301,7 +305,8 @@ void CursesWindow::setPaddingLeft(int paddingL)
 }
 
 /* Set right padding for content, in rows. Padding value given must be >= 0,
- * otherwise it will be ignored.
+ * otherwise it will be ignored. refreshContent() must be called afterward
+ * unless resizing window or replacing current text afterward.
  */
 void CursesWindow::setPaddingRight(int paddingR)
 {
@@ -323,6 +328,16 @@ void CursesWindow::clearContent()
 	}
 
 	update_panels();
+}
+
+/* Re-writes text content into window. Unless replacing text, use after changing
+ * padding to make content lay itself out again within window observing new
+ * padding sizes.
+ */
+void CursesWindow::refreshContent()
+{
+	clearContent();
+	replaceText(content);
 }
 
 /* Saves the given coordinates as the next buffer position at which fillWithText

@@ -52,14 +52,25 @@ int windowFrameworkTest() {
 
 	getch();
 
+	//Test that refreshing content after changing padding observes new sizes
+	myWin->setPadding(5,5,5,5);
+	myWin->setTitle("New Padding");
+	myWin->refreshContent();
+	doupdate();
+
+	getch();
+
 	//Test resize, no move
 	myWin->resize(20,20);
+	myWin->setTitle("Resize - No Move");
 	doupdate();
 
 	getch();
 
 	//Test resize, move
+	myWin->setPadding(3,3,3,3);
 	myWin->resize(35, 10, 2, 2);
+	myWin->setTitle("Resize w/ Move");
 	doupdate();
 
 	getch();

@@ -59,6 +59,7 @@ class CursesWindow : public Window
 		virtual void setPaddingLeft(int);
 		virtual void setPaddingRight(int);
 		virtual void clearContent();
+		virtual void refreshContent();
 
 		virtual void replaceText(const string&);
 		virtual void appendText(const string&);

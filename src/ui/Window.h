@@ -39,6 +39,7 @@ class Window
 		virtual void setPaddingLeft(int) = 0;
 		virtual void setPaddingRight(int) = 0;
 		virtual void clearContent() = 0;
+		virtual void refreshContent() = 0;
 		virtual void replaceText(const string&) = 0;
 		virtual void appendText(const string&) = 0;
 		virtual void appendText(const string&, bool newline) = 0;
