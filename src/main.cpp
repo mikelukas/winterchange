@@ -25,69 +25,6 @@ int windowFrameworkTest() {
 	addstr("Press any key to start.");
 	getch();
 
-	//Test buffer class can flush properly
-	WINDOW* buffWin = newwin(6, 6, 20, 20);
-	box(buffWin, 0, 0);
-
-	CursesWindowBuffer buffer(4, 4); //4,4 to allow for borders
-	buffer.writeAt('a', 0,0);
-	buffer.writeAt('b', 1,1);
-	buffer.writeAt('c', 2,2);
-	buffer.writeAt('d', 3,3);
-	buffer.flushTo(buffWin, 1,1, 0,0, 4,4);
-	wrefresh(buffWin);
-
-	getch();
-
-	//Test buffer class can expand
-	destroy_win(buffWin);
-
-	buffWin = newwin(12,12, 20, 20);
-	box(buffWin, 0,0);
-	buffer.writeAt('e', 4,4);
-	buffer.writeAt('f', 5,5);
-	buffer.writeAt('g', 6,6);
-	buffer.writeAt('h', 7,7);
-	buffer.flushTo(buffWin, 1,1, 0,0, 10,10);
-	wrefresh(buffWin);
-
-	getch();
-
-	//Test can write a portion of a buffer that is larger than the window into the window
-	destroy_win(buffWin);
-
-	for(int row = 0; row < buffer.getHeight(); row++)
-	{
-		for(int col = 0; col < buffer.getWidth(); col++)
-		{
-			buffer.writeAt((chtype)(0x41+((row*buffer.getWidth()+col) % 26)), row, col);
-		}
-	}
-	buffWin = newwin(6,6, 20, 20);
-	box(buffWin, 0,0);
-	buffer.flushTo(buffWin, 1,1, 0,0, 4,4);
-	wrefresh(buffWin);
-
-	getch();
-
-	//Test drawing into window using a non-zero top offset into the buffer, scrolling content after keypress
-	for(int tShift = 0; tShift < buffer.getHeight()-1; tShift++)
-	{
-		buffer.flushTo(buffWin, 1,1, tShift,0, 4,4);
-		wrefresh(buffWin);
-
-		getch();
-	}
-
-	//Same as previous test, just using left offset
-	for(int lShift = 0; lShift < buffer.getWidth()-1; lShift++)
-	{
-		buffer.flushTo(buffWin, 1,1, 0,lShift, 4,4);
-		wrefresh(buffWin);
-
-		getch();
-	}
-
 	//Create and show encapsulated curses window
 	Window* myWin = new CursesWindow(30, 30, -10, -10);
 	myWin->setTitle("Winning");
@@ -200,6 +137,71 @@ int windowFrameworkTest() {
 	endwin();
 
 	return 0;
+}
+
+void bufferTests() {
+	//Test buffer class can flush properly
+	WINDOW* buffWin = newwin(6, 6, 20, 20);
+	box(buffWin, 0, 0);
+
+	CursesWindowBuffer buffer(4, 4); //4,4 to allow for borders
+	buffer.writeAt('a', 0,0);
+	buffer.writeAt('b', 1,1);
+	buffer.writeAt('c', 2,2);
+	buffer.writeAt('d', 3,3);
+	buffer.flushTo(buffWin, 1,1, 0,0, 4,4);
+	wrefresh(buffWin);
+
+	getch();
+
+	//Test buffer class can expand
+	destroy_win(buffWin);
+
+	buffWin = newwin(12,12, 20, 20);
+	box(buffWin, 0,0);
+	buffer.writeAt('e', 4,4);
+	buffer.writeAt('f', 5,5);
+	buffer.writeAt('g', 6,6);
+	buffer.writeAt('h', 7,7);
+	buffer.flushTo(buffWin, 1,1, 0,0, 10,10);
+	wrefresh(buffWin);
+
+	getch();
+
+	//Test can write a portion of a buffer that is larger than the window into the window
+	destroy_win(buffWin);
+
+	for(int row = 0; row < buffer.getHeight(); row++)
+	{
+		for(int col = 0; col < buffer.getWidth(); col++)
+		{
+			buffer.writeAt((chtype)(0x41+((row*buffer.getWidth()+col) % 26)), row, col);
+		}
+	}
+	buffWin = newwin(6,6, 20, 20);
+	box(buffWin, 0,0);
+	buffer.flushTo(buffWin, 1,1, 0,0, 4,4);
+	wrefresh(buffWin);
+
+	getch();
+
+	//Test drawing into window using a non-zero top offset into the buffer, scrolling content after keypress
+	for(int tShift = 0; tShift < buffer.getHeight()-1; tShift++)
+	{
+		buffer.flushTo(buffWin, 1,1, tShift,0, 4,4);
+		wrefresh(buffWin);
+
+		getch();
+	}
+
+	//Same as previous test, just using left offset
+	for(int lShift = 0; lShift < buffer.getWidth()-1; lShift++)
+	{
+		buffer.flushTo(buffWin, 1,1, 0,lShift, 4,4);
+		wrefresh(buffWin);
+
+		getch();
+	}
 }
 
 int window_demo() {
