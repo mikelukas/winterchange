@@ -3,6 +3,7 @@
 
 #include <panel.h>
 #include "Window.h"
+#include "CursesWindowBuffer.h"
 
 /* Implementation of Window interface using ncurses/PDcurses to draw the window
  * and manage its panel
@@ -25,12 +26,14 @@ class CursesWindow : public Window
 		string title;
 		string content;
 
-		void initCursesWin(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
+		CursesWindowBuffer* buffer;
+
+		void init(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
 
 		virtual void clearContent(int, int);
 		virtual void fillWithText(const string&, int, int);
+		virtual void flushBuffer();
 
-		virtual void saveNextWriteCoords();
 		virtual void saveNextWriteCoords(int row, int col);
 
 	public:

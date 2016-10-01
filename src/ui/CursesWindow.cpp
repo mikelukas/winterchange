@@ -10,9 +10,10 @@ CursesWindow::CursesWindow(int w, int h)
 	  nextWriteRow(0),
 	  nextWriteCol(0),
 	  title(""),
-	  content("")
+	  content(""),
+	  buffer(NULL)
 {
-	initCursesWin(h, w, 0, 0);
+	init(h, w, 0, 0);
 }
 
 CursesWindow::CursesWindow(int w, int h, int x, int y)
@@ -25,9 +26,10 @@ CursesWindow::CursesWindow(int w, int h, int x, int y)
 	  nextWriteRow(0),
 	  nextWriteCol(0),
 	  title(""),
-	  content("")
+	  content(""),
+	  buffer(NULL)
 {
-	initCursesWin(h, w, y, x);
+	init(h, w, y, x);
 }
 
 CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
@@ -41,9 +43,10 @@ CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
 	  nextWriteRow(0),
 	  nextWriteCol(0),
 	  title(""),
-	  content("")
+	  content(""),
+	  buffer(NULL)
 {
-	initCursesWin(h, w, y, x);
+	init(h, w, y, x);
 }
 
 CursesWindow::~CursesWindow()
@@ -56,6 +59,7 @@ CursesWindow::~CursesWindow()
 	children.clear();
 
 	//Deallocate
+	delete buffer;
 	del_panel(panel);
 	delwin(win);
 }
@@ -68,8 +72,14 @@ CursesWindow::~CursesWindow()
  *
  * Does not update physical screen, just draws to the panel virtual screen.
  */
-void CursesWindow::initCursesWin(int rows, int cols, int row, int col)
+void CursesWindow::init(int rows, int cols, int row, int col)
 {
+	if(buffer != NULL)
+	{
+		delete buffer;
+	}
+	buffer = new CursesWindowBuffer(rows, cols);
+
 	//Ensure top-left corner is on-screen (newwin will fail otherwise).
 	int adjustedRow = constrainValue(row, 0, LINES-1);
 	int adjustedCol = constrainValue(col, 0, COLS-1);
@@ -131,7 +141,7 @@ void CursesWindow::resize(int w, int h)
 void CursesWindow::resize(int w, int h, int x, int y)
 {
 	wclear(win);
-	initCursesWin(h, w, y, x); //TODO: use wresize instead, still replace panel, and update panels. do move in a separate move_panel step after resize, or don't allow new x,y at all
+	init(h, w, y, x); //TODO: use wresize instead, still replace panel, and update panels. do move in a separate move_panel step after resize, or don't allow new x,y at all
 	replaceText(content);
 }
 
@@ -305,40 +315,34 @@ void CursesWindow::setPaddingRight(int paddingR)
 /** Overwrites entire content area of window (area within borders) with spaces*/
 void CursesWindow::clearContent()
 {
-	clearContent(1, 1);
+	clearContent(0, 0);
 }
 
 /** Overwrites content area of window (area within borders) with spaces,
  * starting from the given coordinates onward (inclusive).*/
 void CursesWindow::clearContent(int startRow, int startCol)
 {
-	mvwhline(win, startRow++, startCol, ' ', getWidth()-1-startCol); //first row may not be a full row based on off-set, so clear it to the border (hence -1)
+	int firstCol = startCol;
 	for(int row = startRow; row < getHeight()-1; row++)
 	{
-		mvwhline(win, row, 1, ' ', getWidth()-2); //-2 here instead of -1 like before, b/c the above is -1-startCol, and -2 = -1-1, which matches the -1-startCol formula since the first -1 is for the border, and second is because we're starting drawing at 1 (i.e. startCol = 1)
+		for(int col = firstCol; col < getWidth()-1; col++)
+		{
+			buffer->writeAt(' ', row, col);
+		}
+
+		firstCol = 0;
 	}
-
-	update_panels();
 }
 
-/* Saves the current cursor position RELATIVE TO PADDING as the next position at
- * which fillWithText will write.*/
-void CursesWindow::saveNextWriteCoords()
-{
-	int curRow, curCol;
-	getyx(win, curRow, curCol);
-	saveNextWriteCoords(curRow, curCol);
-}
-
-/* Saves the given coordinates RELATIVE TO PADDING as the next position at which
- * fillWithText will write when appending text.*/
+/* Saves the given coordinates as the next buffer position at which fillWithText
+ * will write when appending text.*/
 void CursesWindow::saveNextWriteCoords(int row, int col)
 {
-	nextWriteRow = row-paddingT;
-	nextWriteCol = col-paddingL;
+	nextWriteRow = row;
+	nextWriteCol = col;
 }
 
-/* Fills the window's content area with the given text accounting for padding,
+/* Fills the window's buffer with the given text accounting for padding,
  * wrapping text at words if it is too large for the content area.
  *
  * If the padding is invalid (negative, or too large such that there is no area
@@ -348,64 +352,44 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 {
 	if(paddingT + paddingB > getHeight()-2 || paddingL + paddingR > getWidth()-2)
 	{
-		saveNextWriteCoords(1,1);
+		saveNextWriteCoords(0,0);
 		clearContent();
 		return;
 	}
 
 	int adjustedW = getWidth()-2 - paddingL - paddingR;
-	int adjustedH = getHeight()-2 - paddingT - paddingB;
 
 	//Extents of content area after applying padding.
-	int firstRow = 1 + paddingT; //+1 to start w/i border
-	int firstCol = 1 + paddingL;
-	int maxRow = firstRow + adjustedH;
+	int firstCol = 0;
+
 	int maxCol = firstCol + adjustedW;
 
 	//Position to actually start writing at
-	int startRow = offsetRow + paddingT;
-	int startCol = offsetCol + paddingL;
-
-	//Don't write anything if we're going to write out of bounds, though save coords for good measure for subsequent append calls
-	if(startRow >= maxRow)
-	{
-		saveNextWriteCoords(startRow, startCol);
-		return;
-	}
+	int startRow = offsetRow;
+	int startCol = offsetCol;
 
 	int wordStart = 0;
-
-	wmove(win, startRow, startCol);
-
-	int curRow, curCol;
+	int curRow = startRow, curCol = startCol;
 	for(int i = 0; i < text.length(); i++)
 	{
 		if(!isWhitespaceChar(text[i]) && i+1 != text.length()) { //latter test will cause the last word to be flushed if we don't hit another whitespace char as the last char in the text
  			continue; //Only take action when we hit white space
 		}
 
-		getyx(win, curRow, curCol);
-
 		//Write-out word
 		int wordSize = i-wordStart;
-		if(curCol + wordSize > maxCol) {
+		if(curCol + wordSize > maxCol) { //Word won't fit on line
 			if(wordSize < adjustedW) {
 				//Advance cursor to next line before continuing to draw the word
 				curRow++;
 				curCol = firstCol;
-				if(curRow >= maxRow) {
-					saveNextWriteCoords();
-					update_panels();
-					return; //abort if we're at the bottom of content area
-				}
-				wmove(win, curRow, curCol);
 			}
 
 			int remainingLineW;
-			while(wordSize > adjustedW) {
+			while(wordSize > adjustedW) { //Word is larger than the full line width; break it up
 				remainingLineW = maxCol - curCol;
 				for(int j = wordStart; j < (wordStart + remainingLineW); j++) {
-					waddch(win, text[j]);
+					buffer->writeAt(text[j], curRow, curCol++);
 				}
 
 				//Recalculate word start, size since we've now written part of it
@@ -415,66 +399,58 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 				//Advance cursor to next line before continuing to draw the word
 				curRow++;
 				curCol = firstCol;
-				if(curRow >= maxRow) {
-					saveNextWriteCoords();
-					update_panels();
-					return; //abort if we're at the bottom of content area
-				}
-
-				wmove(win, curRow, curCol);
 			}
 
 			//Write remaining
 			for(int j = wordStart; j < i; j++) {
-				waddch(win, text[j]);
+				buffer->writeAt(text[j], curRow, curCol++);
 			}
-		} else {
+		} else { //Word fits on line
 			for(int j = wordStart; j < i; j++) {
-				waddch(win, text[j]);
+				buffer->writeAt(text[j], curRow, curCol++);
 			}
 		}
 
 		//reset word start position
 		wordStart = i + 1;
 
-		getyx(win, curRow, curCol);
-
 		//Check if we need to move to a new line instead of drawing whitespace
 		if(curCol >= maxCol-1 //-1 since a space at the end of the line also should advance to the next one
 		|| text[i] == '\n' //don't want to draw \n because it will clear border
 		|| (text[i] == '\t' && maxCol - curCol < TABSIZE)) //don't want to draw tab that is big enough to overwrite border
 		{
-			curRow +=1;
+			curRow++;
 			curCol = firstCol;
-			wmove(win, curRow, curCol);
+		}
+		else if(text[i] == '\t') //Expand tabs that don't move to new lines, since the buffer needs to have the literal characters that will be flushed to the screen
+		{
+			int numSpaces = TABSIZE - (curCol % TABSIZE);
+			for(int j = 0; j < numSpaces; j++)
+			{
+				buffer->writeAt(' ', curRow, curCol++);
+			}
 		}
 		else
 		{
 			//draw whitespace char if it doesn't put us out of bounds
-			waddch(win, text[i]);
-		}
-		if(curRow >= maxRow) {
-			saveNextWriteCoords();
-			update_panels();
-			return;
+			buffer->writeAt(text[i], curRow, curCol++);
 		}
 	}
 
 	//Before clearing any remaining existing content, save current coords, since clearing will move cursor position
-	getyx(win, curRow, curCol);
 	saveNextWriteCoords(curRow, curCol);
 
-	//Fill rest of window with spaces to clear out any previous content
+	//Fill rest of buffer with spaces to clear out any previous content
 	clearContent(curRow, curCol);
 
-	update_panels();
+	flushBuffer();
 }
 
 /* Overwrites all text in the content area with the given text.*/
 void CursesWindow::replaceText(const string& text)
 {
 	content = text;
-	fillWithText(text, 1, 1);
+	fillWithText(text, 0, 0);
 }
 
 /* Adds text to the content area at the next available position for writing
@@ -492,4 +468,17 @@ void CursesWindow::appendText(const string& text, bool newline)
 	string textToWrite = (newline ? "\n" + text : text); //need to make a new string since text is a const
 	content += textToWrite;
 	fillWithText(textToWrite, nextWriteRow, nextWriteCol);
+}
+
+/* Tells the buffer to write its entire content to the content area of the
+ * window.
+ * Tells panels to update.
+ */
+void CursesWindow::flushBuffer()
+{
+	int adjustedW = getWidth()-2 - paddingL - paddingR;
+	int adjustedH = getHeight()-2 - paddingT - paddingB;
+	buffer->flushTo(win, 1 + paddingT, 1 + paddingL, 0,0, adjustedW, adjustedH);
+
+	update_panels();
 }
