@@ -16,9 +16,11 @@ class Window
 		Window* parent;
 		vector<Window*> children;
 
+		bool wordWrap;
+
 	public:
-		Window() : parent(NULL) {}
-		Window(Window* parent) : parent(parent) {}
+		Window();
+		Window(Window* parent);
 		virtual ~Window() {}
 
 		virtual int getWidth() const = 0;
@@ -38,8 +40,11 @@ class Window
 		virtual void setPaddingBottom(int) = 0;
 		virtual void setPaddingLeft(int) = 0;
 		virtual void setPaddingRight(int) = 0;
+
 		virtual void clearContent() = 0;
 		virtual void refreshContent() = 0;
+
+		virtual void setWordWrap(bool wordWrap) { this->wordWrap = wordWrap; }
 		virtual void replaceText(const string&) = 0;
 		virtual void appendText(const string&) = 0;
 		virtual void appendText(const string&, bool newline) = 0;

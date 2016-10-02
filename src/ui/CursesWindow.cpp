@@ -336,6 +336,7 @@ void CursesWindow::clearContent()
  */
 void CursesWindow::refreshContent()
 {
+	buffer->clear();
 	clearContent();
 	replaceText(content);
 }
@@ -385,7 +386,7 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 
 		//Write-out word
 		int wordSize = i-wordStart;
-		if(curCol + wordSize > maxCol) { //Word won't fit on line
+		if(wordWrap && curCol + wordSize > maxCol) { //Word won't fit on line
 			if(wordSize < adjustedW) {
 				//Advance cursor to next line before continuing to draw the word
 				curRow++;
@@ -422,9 +423,10 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 		wordStart = i + 1;
 
 		//Check if we need to move to a new line instead of drawing whitespace
-		if(curCol >= maxCol-1 //-1 since a space at the end of the line also should advance to the next one
-		|| text[i] == '\n' //don't want to draw \n because it will clear border
-		|| (text[i] == '\t' && maxCol - curCol < TABSIZE)) //don't want to draw tab that is big enough to overwrite border
+		if(text[i] == '\n' //don't want to draw \n because it will clear border
+		||(wordWrap
+		   && (curCol >= maxCol-1  //-1 since a space at the end of the line also should advance to the next one
+			  || (text[i] == '\t' && maxCol - curCol < TABSIZE)))) //don't want to draw tab that is big enough to overwrite border
 		{
 			curRow++;
 			curCol = firstCol;

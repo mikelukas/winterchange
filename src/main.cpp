@@ -29,6 +29,7 @@ int windowFrameworkTest() {
 	//Create and show encapsulated curses window
 	Window* myWin = new CursesWindow(30, 30, -10, -10);
 	myWin->setTitle("Winning");
+	myWin->setWordWrap(true);
 	doupdate();
 
 	getch();
@@ -36,6 +37,22 @@ int windowFrameworkTest() {
 	//Test that that filling with some text lays out properly within horizontal bounds, with margins
 	myWin->setPadding(3, 3, 3, 3);
 	myWin->replaceText("01234 6789 123 567 9 123 5 789. 2345 789012345 789012345678901234567890_2345678901234567 90\n\n0123 56\t89 1234\t6789");
+	doupdate();
+
+	getch();
+
+	//Remove text wrap, to check that text only advances to a new line if an actual \n is encountered
+	myWin->setTitle("No text wrap");
+	myWin->setWordWrap(false);
+	myWin->refreshContent();
+	doupdate();
+
+	getch();
+
+	//Turn text wrap back on, ensure text goes back to previous state
+	myWin->setTitle("Wrapping");
+	myWin->setWordWrap(true);
+	myWin->refreshContent();
 	doupdate();
 
 	getch();

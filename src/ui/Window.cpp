@@ -1,5 +1,19 @@
 #include "Window.h"
 
+Window::Window()
+	: parent(NULL),
+	  wordWrap(false)
+{
+
+}
+
+Window::Window(Window* parent)
+	: parent(parent),
+	  wordWrap(false)
+{
+
+}
+
 /* returns true if the given x, y values fall within ALL of the given min and
  * max values for their respective dimensions, false otherwise.
  */
