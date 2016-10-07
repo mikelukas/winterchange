@@ -44,6 +44,12 @@ class Window
 		virtual void clearContent() = 0;
 		virtual void refreshContent() = 0;
 
+		virtual void scrollUp() = 0;
+		virtual void scrollDown() = 0;
+
+		virtual void scrollToTop() = 0;
+		virtual void scrollToBottom() = 0;
+
 		virtual void setWordWrap(bool wordWrap) { this->wordWrap = wordWrap; }
 		virtual void replaceText(const string&) = 0;
 		virtual void appendText(const string&) = 0;

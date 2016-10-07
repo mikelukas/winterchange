@@ -86,8 +86,47 @@ int windowFrameworkTest() {
 
 	//Test resize, move
 	myWin->setPadding(3,3,3,3);
-	myWin->resize(35, 10, 2, 2);
+	myWin->resize(35, 30, 2, 2);
 	myWin->setTitle("Resize w/ Move");
+	doupdate();
+
+	getch();
+
+	//Shrink to add text in prep for scrolling
+	myWin->resize(35, 10);
+	myWin->setTitle("Shrunken");
+	doupdate();
+
+	getch();
+
+	//Test scrolling content by 1 row
+	myWin->scrollDown();
+	myWin->refreshContent();
+	myWin->setTitle("Scrolled down");
+	doupdate();
+
+	getch();
+
+	//Test scrolling content back up 1 row
+	myWin->scrollUp();
+	myWin->refreshContent();
+	myWin->setTitle("Scrolled up");
+	doupdate();
+
+	getch();
+
+	//Test scrolling content to bottom
+	myWin->scrollToBottom();
+	myWin->refreshContent();
+	myWin->setTitle("Scrolled bottom");
+	doupdate();
+
+	getch();
+
+	//Test scrolling content to top
+	myWin->scrollToTop();
+	myWin->refreshContent();
+	myWin->setTitle("Scrolled top");
 	doupdate();
 
 	getch();

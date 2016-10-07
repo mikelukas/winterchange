@@ -23,12 +23,19 @@ class CursesWindow : public Window
 		int nextWriteRow;
 		int nextWriteCol;
 
+		int contentMaxRow;
+		int contentMaxCol;
+
+		int scrollRowOffset;
+
 		string title;
 		string content;
 
 		CursesWindowBuffer* buffer;
 
 		void init(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
+
+		virtual void vScrollTo(int row);
 
 		virtual void fillWithText(const string&, int, int);
 		virtual void flushBuffer();
@@ -43,6 +50,7 @@ class CursesWindow : public Window
 
 		virtual int getWidth() const;
 		virtual int getHeight() const;
+
 		virtual void resize(int w, int h);
 		virtual void resize(int w, int h, int x, int y);
 
@@ -58,8 +66,14 @@ class CursesWindow : public Window
 		virtual void setPaddingBottom(int);
 		virtual void setPaddingLeft(int);
 		virtual void setPaddingRight(int);
+
 		virtual void clearContent();
 		virtual void refreshContent();
+
+		virtual void scrollUp();
+		virtual void scrollDown();
+		virtual void scrollToTop();
+		virtual void scrollToBottom();
 
 		virtual void replaceText(const string&);
 		virtual void appendText(const string&);

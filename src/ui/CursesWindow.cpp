@@ -9,6 +9,7 @@ CursesWindow::CursesWindow(int w, int h)
 	  paddingR(0),
 	  nextWriteRow(0),
 	  nextWriteCol(0),
+	  scrollRowOffset(0),
 	  title(""),
 	  content(""),
 	  buffer(NULL)
@@ -25,6 +26,7 @@ CursesWindow::CursesWindow(int w, int h, int x, int y)
 	  paddingR(0),
 	  nextWriteRow(0),
 	  nextWriteCol(0),
+	  scrollRowOffset(0),
 	  title(""),
 	  content(""),
 	  buffer(NULL)
@@ -42,6 +44,7 @@ CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
 	  paddingR(0),
 	  nextWriteRow(0),
 	  nextWriteCol(0),
+	  scrollRowOffset(0),
 	  title(""),
 	  content(""),
 	  buffer(NULL)
@@ -341,6 +344,81 @@ void CursesWindow::refreshContent()
 	replaceText(content);
 }
 
+/* Decrements scroll row offset, so that when content is flushed to window from
+ * buffer, flushing starts at a row position 1 less row ahead from previous pos.
+ * Cannot decrement beyond 0.
+ */
+void CursesWindow::scrollUp()
+{
+	if(scrollRowOffset > 0) //this implicitly considers if content area is shorter than content area, since offset would be 0 if it is shorter, and thus no scrolling would happen
+	{
+		scrollRowOffset--;
+	}
+}
+
+/* Increments scroll row offset, so that when content is flushed to window from
+ * buffer, flushing starts at a row position 1 more row ahead from previously.
+ * Won't scroll past last row in buffer.
+ */
+void CursesWindow::scrollDown()
+{
+	if(contentMaxRow >= getHeight()-2 - paddingT - paddingB //can only scroll down if content is taller than content area
+	&& scrollRowOffset < buffer->getHeight())
+	{
+		scrollRowOffset++;
+	}
+}
+
+/* Sets scroll row offset to the given row, so that when content is flushed to
+ * the window from the buffer, flushing starts at that row. If row is greater
+ * than the last row of the buffer, it will be set to the last row, and if it is
+ * less than 0, it will be set to 0.
+ */
+void CursesWindow::vScrollTo(int row)
+{
+	if(row >= buffer->getHeight())
+	{
+		scrollRowOffset = buffer->getHeight();
+	}
+	else if(row < 0)
+	{
+		scrollRowOffset = 0;
+	}
+	else
+	{
+		scrollRowOffset = row;
+	}
+}
+
+/** Sets scroll row offset so that when content is flushed to the window from
+ * the buffer, flushing starts at a row that will result in top row of the
+ * content being the first row of the buffer.
+ */
+void CursesWindow::scrollToTop()
+{
+	scrollRowOffset = 0;
+}
+
+/* Sets scroll row offset so that when content is flushed to the window from
+ * the buffer, flushing starts from a row that will result in the bottom row
+ * of the buffer being visible on-screen; if buffered content is bigger than
+ * screen, then bottom row of buffer will be bottom row of content area, and top
+ * row of buffer will be the bottom row-window height.  If content is smaller
+ * than the content area, it will all be displayed, with the top row of the buffer
+ */
+void CursesWindow::scrollToBottom()
+{
+	int contentAreaHeight = getHeight()-2 - paddingT - paddingB;
+	if(contentMaxRow < contentAreaHeight)
+	{
+		scrollRowOffset = 0;
+	}
+	else
+	{
+		scrollRowOffset = contentMaxRow+1 - contentAreaHeight;
+	}
+}
+
 /* Saves the given coordinates as the next buffer position at which fillWithText
  * will write when appending text.*/
 void CursesWindow::saveNextWriteCoords(int row, int col)
@@ -371,6 +449,10 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 	int firstCol = 0;
 
 	int maxCol = firstCol + adjustedW;
+	if(wordWrap)
+	{
+		contentMaxCol = maxCol;
+	}
 
 	//Position to actually start writing at
 	int startRow = offsetRow;
@@ -428,6 +510,11 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 		   && (curCol >= maxCol-1  //-1 since a space at the end of the line also should advance to the next one
 			  || (text[i] == '\t' && maxCol - curCol < TABSIZE)))) //don't want to draw tab that is big enough to overwrite border
 		{
+			if(curCol > contentMaxCol) //Only will matter when not word wrapping; in that case, location of a newline could be beyond content area max column
+			{
+				contentMaxCol = curCol;
+			}
+
 			curRow++;
 			curCol = firstCol;
 		}
@@ -448,6 +535,7 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 
 	//Before clearing any remaining existing content, save current coords, since clearing will move cursor position
 	saveNextWriteCoords(curRow, curCol);
+	contentMaxRow = curRow;
 
 	//Fill rest of buffer with spaces to clear out any previous content
 	buffer->clearFrom(curRow, curCol);
@@ -487,7 +575,7 @@ void CursesWindow::flushBuffer()
 {
 	int adjustedW = getWidth()-2 - paddingL - paddingR;
 	int adjustedH = getHeight()-2 - paddingT - paddingB;
-	buffer->flushTo(win, 1 + paddingT, 1 + paddingL, 0,0, adjustedW, adjustedH);
+	buffer->flushTo(win, 1 + paddingT, 1 + paddingL, scrollRowOffset,0, adjustedW, adjustedH);
 
 	update_panels();
 }
