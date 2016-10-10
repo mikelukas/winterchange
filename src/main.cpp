@@ -244,6 +244,18 @@ int windowFrameworkTest() {
 
 	delete myWin;
 
+	//check for hidden windows due to not updating the panel framework
+	mvaddstr(0,0, "Check for uncleared panels");
+	WINDOW* fsWin = newwin(0, 0, 0, 0);
+	for(int row=1; row < LINES; row++ )
+	{
+		mvwhline(fsWin, row,0, 0x23, COLS);
+	}
+	wrefresh(fsWin);
+
+	getch();
+	destroy_win(fsWin);
+
 	endwin();
 
 	return 0;

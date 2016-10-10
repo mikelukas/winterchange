@@ -65,6 +65,9 @@ CursesWindow::~CursesWindow()
 	delete buffer;
 	del_panel(panel);
 	delwin(win);
+
+	//Update panel system so that it knows the panel has been deleted
+	update_panels();
 }
 
 /* NOTE: rows = height, cols = width, reverse of constructor
