@@ -131,6 +131,48 @@ int windowFrameworkTest() {
 
 	getch();
 
+	//Test scrolling content right by 1 col
+	myWin->setWordWrap(false);
+	myWin->scrollRight();
+	myWin->refreshContent();
+	myWin->setTitle("Scrolled right");
+	doupdate();
+
+	getch();
+
+	//Test scrolling content back left 1 col
+	myWin->scrollLeft();
+	myWin->refreshContent();
+	myWin->setTitle("Scrolled left");
+	doupdate();
+
+	getch();
+
+	//Test scrolling content to right edge
+	myWin->scrollToRightEnd();
+	myWin->refreshContent();
+	myWin->setTitle("Right end");
+	doupdate();
+
+	getch();
+
+	//Test scrolling content back to left edge
+	myWin->scrollToLeftEnd();
+	myWin->refreshContent();
+	myWin->setTitle("Left end");
+	doupdate();
+
+	getch();
+
+	//Test attempt to right-scroll with word-wrap on, which shouldn't work (b/c doesn't make sense)
+	myWin->setWordWrap(true);
+	myWin->scrollRight();
+	myWin->refreshContent();
+	myWin->setTitle("Word-wrap H-scroll");
+	doupdate();
+
+	getch();
+
 	//Test resizing to size smaller than title
 	myWin->resize(5,5);
 	doupdate();

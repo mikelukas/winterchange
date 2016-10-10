@@ -27,6 +27,7 @@ class CursesWindow : public Window
 		int contentMaxCol;
 
 		int scrollRowOffset;
+		int scrollColOffset;
 
 		string title;
 		string content;
@@ -75,6 +76,12 @@ class CursesWindow : public Window
 		virtual void scrollToTop();
 		virtual void scrollToBottom();
 
+		virtual void scrollLeft();
+		virtual void scrollRight();
+		virtual void scrollToLeftEnd();
+		virtual void scrollToRightEnd();
+
+		virtual void setWordWrap(bool);
 		virtual void replaceText(const string&);
 		virtual void appendText(const string&);
 		virtual void appendText(const string&, bool newLine);

@@ -345,12 +345,12 @@ void CursesWindow::refreshContent()
 }
 
 /* Decrements scroll row offset, so that when content is flushed to window from
- * buffer, flushing starts at a row position 1 less row ahead from previous pos.
+ * buffer, flushing starts at a row position 1 less row from previous pos.
  * Cannot decrement beyond 0.
  */
 void CursesWindow::scrollUp()
 {
-	if(scrollRowOffset > 0) //this implicitly considers if content area is shorter than content area, since offset would be 0 if it is shorter, and thus no scrolling would happen
+	if(scrollRowOffset > 0) //this implicitly considers if content is shorter than content area, since offset would be 0 if it is shorter, and thus no scrolling would happen
 	{
 		scrollRowOffset--;
 	}
@@ -416,6 +416,70 @@ void CursesWindow::scrollToBottom()
 	else
 	{
 		scrollRowOffset = contentMaxRow+1 - contentAreaHeight;
+	}
+}
+
+/* Decrements scroll col offset, so that when content is flushed to window from
+ * buffer, flushing starts at a col position 1 less col from previous pos.
+ * Cannot decrement beyond 0.
+ */
+void CursesWindow::scrollLeft()
+{
+	if(scrollColOffset > 0) //this implicitly considers if content is shorter than content area, since offset would be 0 if it is shorter, and thus no scrolling would happen
+	{
+		scrollColOffset--;
+	}
+}
+
+/* Increments scroll col offset, so that when content is flushed to window from
+ * buffer, flushing starts at a col position 1 more col ahead from previously.
+ * Won't scroll past last col in buffer.
+ * Cannot scroll right if wordWrap is enabled, b/c content is purposely reshaped
+ * to fit the width of the content area in this case and can't be wider.
+ */
+void CursesWindow::scrollRight()
+{
+	if(!wordWrap
+	&& contentMaxCol >= getWidth()-2 - paddingL - paddingR //can only scroll right if content is wider than content area
+	&& scrollColOffset < buffer->getWidth())
+	{
+		scrollColOffset++;
+	}
+}
+
+/** Sets scroll col offset so that when content is flushed to the window from
+ * the buffer, flushing starts at a col that will result in leftmost col of the
+ * content being the first col of the buffer.
+ */
+void CursesWindow::scrollToLeftEnd()
+{
+	scrollColOffset = 0;
+}
+
+/* Sets scroll col offset so that when content is flushed to the window from
+ * the buffer, flushing starts from a col that will result in the rightmost col
+ * of the buffer being visible on-screen; if buffered content is bigger than
+ * screen, then rightmost col of buffer will be rightmost col of content area, and
+ * leftmost col of buffer will be the rightmost col minus window width.  If
+ * content is smaller than the content area, it will all be displayed, with the
+ * leftmost col of the buffer.
+ * Cannot scroll to the right end if word-wrap is enabled.
+ */
+void CursesWindow::scrollToRightEnd()
+{
+	if(wordWrap)
+	{
+		return;
+	}
+
+	int contentAreaWidth = getWidth()-2 - paddingL - paddingR;
+	if(contentMaxCol < contentAreaWidth)
+	{
+		scrollColOffset = 0;
+	}
+	else
+	{
+		scrollColOffset = contentMaxCol+1 - contentAreaWidth;
 	}
 }
 
@@ -543,6 +607,17 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 	flushBuffer();
 }
 
+/* Sets word wrap on text added to this window so that it will go to the next
+ * line when it reaches the right edge of the content area.
+ * If word wrap is being enabled, the scroll column offset will be reset to the
+ * left edge, b/c horizontal scroll cannot happen when words wrap in this way.
+ */
+void CursesWindow::setWordWrap(bool wordWrap)
+{
+	Window::setWordWrap(wordWrap);
+	scrollColOffset = 0;
+}
+
 /* Overwrites all text in the content area with the given text.*/
 void CursesWindow::replaceText(const string& text)
 {
@@ -575,7 +650,7 @@ void CursesWindow::flushBuffer()
 {
 	int adjustedW = getWidth()-2 - paddingL - paddingR;
 	int adjustedH = getHeight()-2 - paddingT - paddingB;
-	buffer->flushTo(win, 1 + paddingT, 1 + paddingL, scrollRowOffset,0, adjustedW, adjustedH);
+	buffer->flushTo(win, 1 + paddingT, 1 + paddingL, scrollRowOffset,scrollColOffset, adjustedW, adjustedH);
 
 	update_panels();
 }
