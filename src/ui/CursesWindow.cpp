@@ -17,6 +17,27 @@ CursesWindow::CursesWindow(int w, int h)
 	init(h, w, 0, 0);
 }
 
+CursesWindow::CursesWindow(const string& content)
+	: win(NULL),
+	  panel(NULL),
+	  paddingT(0),
+	  paddingB(0),
+	  paddingL(0),
+	  paddingR(0),
+	  nextWriteRow(0),
+	  nextWriteCol(0),
+	  scrollRowOffset(0),
+	  title(""),
+	  content(content),
+	  buffer(NULL)
+{
+	int w, h;
+	getBoxSizeForText(content, w, h);
+
+	init(h+2, w+2, 0, 0); //+2 for borders on each side
+	replaceText(content);
+}
+
 CursesWindow::CursesWindow(int w, int h, int x, int y)
 	: win(NULL),
 	  panel(NULL),
@@ -32,6 +53,27 @@ CursesWindow::CursesWindow(int w, int h, int x, int y)
 	  buffer(NULL)
 {
 	init(h, w, y, x);
+}
+
+CursesWindow::CursesWindow(const string& content, int x, int y)
+	: win(NULL),
+	  panel(NULL),
+	  paddingT(0),
+	  paddingB(0),
+	  paddingL(0),
+	  paddingR(0),
+	  nextWriteRow(0),
+	  nextWriteCol(0),
+	  scrollRowOffset(0),
+	  title(""),
+	  content(content),
+	  buffer(NULL)
+{
+	int w,h;
+	getBoxSizeForText(content, w, h);
+
+	init(h+2, w+2, y, x); //+2 for borders on each side
+	replaceText(content);
 }
 
 CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
@@ -50,6 +92,28 @@ CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
 	  buffer(NULL)
 {
 	init(h, w, y, x);
+}
+
+CursesWindow::CursesWindow(Window* parent, const string& content, int x, int y)
+	: Window(parent),
+	  win(NULL),
+	  panel(NULL),
+	  paddingT(0),
+	  paddingB(0),
+	  paddingL(0),
+	  paddingR(0),
+	  nextWriteRow(0),
+	  nextWriteCol(0),
+	  scrollRowOffset(0),
+	  title(""),
+	  content(""),
+	  buffer(NULL)
+{
+	int w, h;
+	getBoxSizeForText(content, w, h);
+
+	init(h+2, w+2, y, x); //+2 for borders on each side
+	replaceText(content);
 }
 
 CursesWindow::~CursesWindow()
@@ -254,6 +318,42 @@ Window* CursesWindow::makeChildCentered(int w, int h)
 Window* CursesWindow::makeChild(int w, int h, int x, int y)
 {
 	Window* child = new CursesWindow(parent, w, h, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
+	children.push_back(child);
+
+	return child;
+}
+
+/** Allocates a new CursesWindow child window (see non-withContent() methods),
+ * sized to fit the given text, with top-left corner in the top-left corner
+ * inside this Window's borders.
+ */
+Window* CursesWindow::makeChildWithContent(const string& content)
+{
+	return makeChildWithContent(content, 0,0);
+}
+
+/** Allocates a new CursesWindow child window (see non-withContent() methods),
+ * sized to fit the given text, centered within this window.  Window dimensions
+ * will be shrunken to fit on screen if they spill out.
+ */
+Window* CursesWindow::makeChildWithContentCentered(const string& content)
+{
+	int w,h;
+	getBoxSizeForText(content, w, h);
+
+	Window* child = makeChildCentered(w+2,h+2); //+2 for borders
+	child->replaceText(content);
+
+	return child;
+}
+
+/** Allocates a new CursesWindow child window (see non-withContent() methods),
+ * sized to fit the given text, with top-left corner positioned at the given
+ * x,y coordinates relative to the area within the window's borders.
+ */
+Window* CursesWindow::makeChildWithContent(const string& content, int x, int y)
+{
+	Window* child = new CursesWindow(parent, content, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
 	children.push_back(child);
 
 	return child;

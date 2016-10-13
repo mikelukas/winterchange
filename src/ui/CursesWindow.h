@@ -45,8 +45,11 @@ class CursesWindow : public Window
 
 	public:
 		CursesWindow(int w, int h);
+		CursesWindow(const string&);
 		CursesWindow(int w, int h, int x, int y);
+		CursesWindow(const string&, int x, int y);
 		CursesWindow(Window* parent, int w, int h, int x, int y);
+		CursesWindow(Window* parent, const string&, int x, int y);
 		virtual ~CursesWindow();
 
 		virtual int getWidth() const;
@@ -89,6 +92,10 @@ class CursesWindow : public Window
 		virtual Window* makeChild(int w, int h); //adds child at 0,0 relative to this window's top-left corner
 		virtual Window* makeChildCentered(int w, int h);
 		virtual Window* makeChild(int w, int h, int x, int y);
+
+		virtual Window* makeChildWithContent(const string&);
+		virtual Window* makeChildWithContentCentered(const string&);
+		virtual Window* makeChildWithContent(const string&, int x, int y);
 };
 
 #endif

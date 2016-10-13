@@ -22,6 +22,36 @@ bool isWithinBounds(int x, int y, int minX, int minY, int maxX, int maxY)
 	return x >= minX && y >= minY && x <= maxX && y <= maxY;
 }
 
+/* Scans the entire given string for lines of text delimited by \n and fills the
+ * given integers with the width and height (in # characters) of a box that
+ * would fit around the text.
+ * Height will always be at least 1, even if given an empty string.
+ */
+void getBoxSizeForText(const string& text, int& textW, int& textH)
+{
+	int currLineLen = 0;
+	textW = 0;
+	textH = 1;
+
+	for(int i = 0; i < text.length(); i++)
+	{
+		if(text[i] != '\n')  //not end of line, keep counting
+		{
+			currLineLen++;
+		}
+		else //End of line, check if our line is longest we've seen, reset line length counter
+		{
+			if(currLineLen > textW)
+			{
+				textW = currLineLen;
+			}
+
+			currLineLen = 0;
+			textH++;
+		}
+	}
+}
+
 /* Ensures that value falls between the given min and max values.  If it doesn't
  * returns the nearest of min or max to the given value.
  */

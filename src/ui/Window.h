@@ -65,10 +65,15 @@ class Window
 		virtual Window* makeChildCentered(int w, int h) = 0;
 		virtual Window* makeChild(int w, int h, int x, int y) = 0;
 
+		virtual Window* makeChildWithContent(const string&) = 0;
+		virtual Window* makeChildWithContentCentered(const string&) = 0;
+		virtual Window* makeChildWithContent(const string&, int x, int y) = 0;
+
 		virtual Window* getParent() { return parent; }
 };
 
 bool isWithinBounds(int x, int y, int minX, int minY, int maxX, int maxY);
+void getBoxSizeForText(const string& text, int& textW, int& textH);
 int constrainValue(int value, int min, int max);
 bool isWhitespaceChar(char);
 

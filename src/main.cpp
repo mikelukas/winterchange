@@ -5,6 +5,7 @@ WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
 
 int windowFrameworkTest();
+void fittedWindowTests();
 void bufferTests();
 int window_demo();
 int panel_basic_demo();
@@ -244,6 +245,8 @@ int windowFrameworkTest() {
 
 	delete myWin;
 
+	fittedWindowTests();
+
 	//check for hidden windows due to not updating the panel framework
 	mvaddstr(0,0, "Check for uncleared panels");
 	WINDOW* fsWin = newwin(0, 0, 0, 0);
@@ -259,6 +262,36 @@ int windowFrameworkTest() {
 	endwin();
 
 	return 0;
+}
+
+void fittedWindowTests() {
+	Window* fittedWin = new CursesWindow("Blah\nBlah\nBlah");
+	doupdate();
+
+	getch();
+
+	fittedWin->replaceText("");
+	fittedWin->resize(30,30);
+	Window* fittedChild = fittedWin->makeChildWithContent("Content\nContent\nContent");
+	doupdate();
+
+	getch();
+
+	delete fittedChild;
+
+	fittedChild = fittedWin->makeChildWithContentCentered("Centered\nCentered\nCentered");
+	doupdate();
+
+	getch();
+
+	delete fittedChild;
+
+	fittedChild = fittedWin->makeChildWithContent("Displaced\nDisplaced\nDisplaced", 3,5);
+	doupdate();
+
+	getch();
+
+	delete fittedChild;
 }
 
 void bufferTests() {
