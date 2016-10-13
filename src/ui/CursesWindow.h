@@ -34,7 +34,8 @@ class CursesWindow : public Window
 
 		CursesWindowBuffer* buffer;
 
-		void init(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
+		virtual void init(const string& content, int w, int h, int x, int y);
+		virtual void buildWindow(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
 
 		virtual void vScrollTo(int row);
 

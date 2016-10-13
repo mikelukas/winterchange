@@ -1,119 +1,41 @@
 #include "CursesWindow.h"
 
 CursesWindow::CursesWindow(int w, int h)
-	: win(NULL),
-	  panel(NULL),
-	  paddingT(0),
-	  paddingB(0),
-	  paddingL(0),
-	  paddingR(0),
-	  nextWriteRow(0),
-	  nextWriteCol(0),
-	  scrollRowOffset(0),
-	  title(""),
-	  content(""),
-	  buffer(NULL)
 {
-	init(h, w, 0, 0);
+	init("", w, h, 0, 0);
 }
 
 CursesWindow::CursesWindow(const string& content)
-	: win(NULL),
-	  panel(NULL),
-	  paddingT(0),
-	  paddingB(0),
-	  paddingL(0),
-	  paddingR(0),
-	  nextWriteRow(0),
-	  nextWriteCol(0),
-	  scrollRowOffset(0),
-	  title(""),
-	  content(content),
-	  buffer(NULL)
 {
 	int w, h;
-	getBoxSizeForText(content, w, h);
-
-	init(h+2, w+2, 0, 0); //+2 for borders on each side
-	replaceText(content);
+	getBoxSizeForText(content, w, h, 2, 2); //2 for borders on each side
+	init(content, w, h, 0, 0);
 }
 
 CursesWindow::CursesWindow(int w, int h, int x, int y)
-	: win(NULL),
-	  panel(NULL),
-	  paddingT(0),
-	  paddingB(0),
-	  paddingL(0),
-	  paddingR(0),
-	  nextWriteRow(0),
-	  nextWriteCol(0),
-	  scrollRowOffset(0),
-	  title(""),
-	  content(""),
-	  buffer(NULL)
 {
-	init(h, w, y, x);
+	init("", w, h, x, y);
 }
 
 CursesWindow::CursesWindow(const string& content, int x, int y)
-	: win(NULL),
-	  panel(NULL),
-	  paddingT(0),
-	  paddingB(0),
-	  paddingL(0),
-	  paddingR(0),
-	  nextWriteRow(0),
-	  nextWriteCol(0),
-	  scrollRowOffset(0),
-	  title(""),
-	  content(content),
-	  buffer(NULL)
 {
 	int w,h;
-	getBoxSizeForText(content, w, h);
-
-	init(h+2, w+2, y, x); //+2 for borders on each side
-	replaceText(content);
+	getBoxSizeForText(content, w, h, 2, 2); //2 for borders on each side
+	init(content, w, h, x, y);
 }
 
 CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
-	: Window(parent),
-	  win(NULL),
-	  panel(NULL),
-	  paddingT(0),
-	  paddingB(0),
-	  paddingL(0),
-	  paddingR(0),
-	  nextWriteRow(0),
-	  nextWriteCol(0),
-	  scrollRowOffset(0),
-	  title(""),
-	  content(""),
-	  buffer(NULL)
+	: Window(parent)
 {
-	init(h, w, y, x);
+	init("", w, h, x, y);
 }
 
 CursesWindow::CursesWindow(Window* parent, const string& content, int x, int y)
-	: Window(parent),
-	  win(NULL),
-	  panel(NULL),
-	  paddingT(0),
-	  paddingB(0),
-	  paddingL(0),
-	  paddingR(0),
-	  nextWriteRow(0),
-	  nextWriteCol(0),
-	  scrollRowOffset(0),
-	  title(""),
-	  content(""),
-	  buffer(NULL)
+	: Window(parent)
 {
 	int w, h;
-	getBoxSizeForText(content, w, h);
-
-	init(h+2, w+2, y, x); //+2 for borders on each side
-	replaceText(content);
+	getBoxSizeForText(content, w, h, 2, 2);  //2 for borders on each side
+	init(content, w, h, x, y);
 }
 
 CursesWindow::~CursesWindow()
@@ -134,6 +56,28 @@ CursesWindow::~CursesWindow()
 	update_panels();
 }
 
+void CursesWindow::init(const string& content, int w, int h, int x, int y)
+{
+	win = NULL;
+	panel = NULL;
+	paddingT = 0;
+	paddingB = 0;
+	paddingL = 0;
+	paddingR = 0;
+	nextWriteRow = 0;
+	nextWriteCol = 0;
+	scrollRowOffset = 0;
+	title = "";
+	this->content = "";
+	buffer = NULL;
+
+	buildWindow(h, w, y, x);
+
+	if(content.length() > 0) {
+		replaceText(content);
+	}
+}
+
 /* NOTE: rows = height, cols = width, reverse of constructor
  * Create a curses window and panel w/ the given dimensions and absolute coords.
  * If the given coordinates are off-screen, they will each be adjusted to fall
@@ -142,7 +86,7 @@ CursesWindow::~CursesWindow()
  *
  * Does not update physical screen, just draws to the panel virtual screen.
  */
-void CursesWindow::init(int rows, int cols, int row, int col)
+void CursesWindow::buildWindow(int rows, int cols, int row, int col)
 {
 	if(buffer != NULL)
 	{
@@ -211,7 +155,7 @@ void CursesWindow::resize(int w, int h)
 void CursesWindow::resize(int w, int h, int x, int y)
 {
 	wclear(win);
-	init(h, w, y, x); //TODO: use wresize instead, still replace panel, and update panels. do move in a separate move_panel step after resize, or don't allow new x,y at all
+	buildWindow(h, w, y, x); //TODO: use wresize instead, still replace panel, and update panels. do move in a separate move_panel step after resize, or don't allow new x,y at all
 	replaceText(content);
 }
 
@@ -339,9 +283,9 @@ Window* CursesWindow::makeChildWithContent(const string& content)
 Window* CursesWindow::makeChildWithContentCentered(const string& content)
 {
 	int w,h;
-	getBoxSizeForText(content, w, h);
+	getBoxSizeForText(content, w, h, 2, 2); //+2 for borders
 
-	Window* child = makeChildCentered(w+2,h+2); //+2 for borders
+	Window* child = makeChildCentered(w,h);
 	child->replaceText(content);
 
 	return child;

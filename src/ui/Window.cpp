@@ -26,8 +26,11 @@ bool isWithinBounds(int x, int y, int minX, int minY, int maxX, int maxY)
  * given integers with the width and height (in # characters) of a box that
  * would fit around the text.
  * Height will always be at least 1, even if given an empty string.
+ * hBorderSizeSum and vBorderSizeSum contain the total size of the left+right
+ * and top+bottom borders, to be added into the final dimensions set into textW
+ * and textH. E.g. for 1-char borders, pass in a sizeSum of 2 (1 for each side).
  */
-void getBoxSizeForText(const string& text, int& textW, int& textH)
+void getBoxSizeForText(const string& text, int& textW, int& textH, int hBorderSizeSum, int vBorderSizeSum)
 {
 	int currLineLen = 0;
 	textW = 0;
@@ -50,6 +53,9 @@ void getBoxSizeForText(const string& text, int& textW, int& textH)
 			textH++;
 		}
 	}
+
+	textW += hBorderSizeSum;
+	textH += vBorderSizeSum;
 }
 
 /* Ensures that value falls between the given min and max values.  If it doesn't

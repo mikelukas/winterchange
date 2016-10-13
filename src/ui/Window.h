@@ -73,7 +73,7 @@ class Window
 };
 
 bool isWithinBounds(int x, int y, int minX, int minY, int maxX, int maxY);
-void getBoxSizeForText(const string& text, int& textW, int& textH);
+void getBoxSizeForText(const string& text, int& textW, int& textH, int hBorderSizeSum, int vBorderSizeSum);
 int constrainValue(int value, int min, int max);
 bool isWhitespaceChar(char);
 
