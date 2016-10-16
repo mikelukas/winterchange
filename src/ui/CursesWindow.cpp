@@ -66,7 +66,10 @@ void CursesWindow::init(const string& content, int w, int h, int x, int y)
 	paddingR = 0;
 	nextWriteRow = 0;
 	nextWriteCol = 0;
+	contentMaxRow = 0;
+	contentMaxCol = 0;
 	scrollRowOffset = 0;
+	scrollColOffset = 0;
 	title = "";
 	this->content = "";
 	buffer = NULL;
@@ -391,6 +394,16 @@ void CursesWindow::refreshContent()
 	replaceText(content);
 }
 
+/* Clears content drawn to the window, then flushes the buffer to it again,
+ * then calls doupdate() on ncurses.
+ */
+void CursesWindow::redraw()
+{
+	clearContent();
+	flushBuffer();
+	doupdate();
+}
+
 /* Decrements scroll row offset, so that when content is flushed to window from
  * buffer, flushing starts at a row position 1 less row from previous pos.
  * Cannot decrement beyond 0.
@@ -652,6 +665,62 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 	buffer->clearFrom(curRow, curCol);
 
 	flushBuffer();
+}
+
+/* Writes character directly into the window, relative to the top-left corner of
+ * the content area (i.e. offset by borders + top-left padding).
+ * If coordinates are negative, nothing will be written.  If coordinates are out
+ * of bounds to the right or bottom, characters will be written into the buffer
+ * but not displayed on screen.
+ */
+void CursesWindow::writeCharAt(char c, int x, int y)
+{
+	if(x < 0 || y < 0)
+	{
+		return;
+	}
+
+	buffer->writeAt((chtype) c, y + scrollRowOffset, x + scrollColOffset);
+	if(x + scrollColOffset > contentMaxCol)
+	{
+		contentMaxCol = x + scrollColOffset;
+	}
+
+	if(y + scrollRowOffset > contentMaxRow)
+	{
+		contentMaxRow = y + scrollRowOffset;
+	}
+}
+
+/* Writes string directly into the window, relative to the top-left corner of
+ * the content area (i.e. offset by borders + top-left padding).
+ * If coordinates are negative, nothing will be written.  If coordinates are out
+ * of bounds to the right or bottom, characters will be written into the buffer
+ * but not displayed on screen.
+ */
+void CursesWindow::writeStrAt(const string& str, int x, int y)
+{
+	if(x < 0 || y < 0)
+	{
+		return;
+	}
+
+	for(int i = 0; i < str.length(); i++)
+	{
+		buffer->writeAt((chtype) (str[i]), y + scrollRowOffset, x + scrollColOffset + i);
+	}
+
+	int maxX = x + scrollColOffset + str.length() - 1;
+	int maxY = y + scrollRowOffset;
+	if(maxX > contentMaxCol)
+	{
+		contentMaxCol = maxX;
+	}
+
+	if(maxY > contentMaxRow)
+	{
+		contentMaxRow = maxY;
+	}
 }
 
 /* Sets word wrap on text added to this window so that it will go to the next

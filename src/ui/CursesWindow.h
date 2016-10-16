@@ -74,6 +74,7 @@ class CursesWindow : public Window
 
 		virtual void clearContent();
 		virtual void refreshContent();
+		virtual void redraw();
 
 		virtual void scrollUp();
 		virtual void scrollDown();
@@ -84,6 +85,9 @@ class CursesWindow : public Window
 		virtual void scrollRight();
 		virtual void scrollToLeftEnd();
 		virtual void scrollToRightEnd();
+
+		virtual void writeCharAt(char, int x, int y);
+		virtual void writeStrAt(const string&, int x, int y);
 
 		virtual void setWordWrap(bool);
 		virtual void replaceText(const string&);

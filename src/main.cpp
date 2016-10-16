@@ -6,6 +6,7 @@ void destroy_win(WINDOW *local_win);
 
 int windowFrameworkTest();
 void fittedWindowTests();
+void directWriteTests();
 void bufferTests();
 int window_demo();
 int panel_basic_demo();
@@ -247,6 +248,8 @@ int windowFrameworkTest() {
 
 	fittedWindowTests();
 
+	directWriteTests();
+
 	//check for hidden windows due to not updating the panel framework
 	mvaddstr(0,0, "Check for uncleared panels");
 	WINDOW* fsWin = newwin(0, 0, 0, 0);
@@ -292,6 +295,34 @@ void fittedWindowTests() {
 	getch();
 
 	delete fittedChild;
+}
+
+void directWriteTests()
+{
+	Window* win = new CursesWindow(7,5);
+	doupdate();
+
+	win->setTitle("Direct");
+	win->writeStrAt("**   **MMM",0,0);
+	win->writeStrAt("****  ****",0,1);
+	win->writeStrAt("*****   **",0,2);
+	win->writeStrAt("M*M**** **",0,3);
+	win->writeStrAt("MCMM    **",0,4);
+
+	win->writeCharAt('@', 2, 0);
+	win->redraw();
+
+	getch();
+
+	win->writeCharAt(' ', 2, 0);
+	win->scrollDown();
+	win->scrollRight();
+	win->writeCharAt('@', 2, 0);
+	win->redraw();
+
+	getch();
+
+	delete win;
 }
 
 void bufferTests() {
