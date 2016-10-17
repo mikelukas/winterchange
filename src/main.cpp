@@ -294,7 +294,7 @@ void fittedWindowTests() {
 
 	getch();
 
-	delete fittedChild;
+	delete fittedWin;
 }
 
 void directWriteTests()

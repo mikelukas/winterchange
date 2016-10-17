@@ -1,11 +1,11 @@
 #ifndef UI_WINDOW_H_
 #define UI_WINDOW_H_
 
+#include <set>
 #include <string>
-#include <vector>
 
+using std::set;
 using std::string;
-using std::vector;
 
 /* Abstract base class for manipulating windows; intended to keep details of the
  * underlying low-level window implementation abstract */
@@ -14,14 +14,14 @@ class Window
 	protected:
 
 		Window* parent;
-		vector<Window*> children;
+		set<Window*> children;
 
 		bool wordWrap;
 
 	public:
 		Window();
 		Window(Window* parent);
-		virtual ~Window() {}
+		virtual ~Window();
 
 		virtual int getWidth() const = 0;
 		virtual int getHeight() const = 0;
@@ -74,6 +74,7 @@ class Window
 		virtual Window* makeChildWithContent(const string&, int x, int y) = 0;
 
 		virtual Window* getParent() { return parent; }
+		virtual void detachChild(Window*);
 };
 
 bool isWithinBounds(int x, int y, int minX, int minY, int maxX, int maxY);

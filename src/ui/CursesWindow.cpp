@@ -40,13 +40,6 @@ CursesWindow::CursesWindow(Window* parent, const string& content, int x, int y)
 
 CursesWindow::~CursesWindow()
 {
-	//Destroy this Window's children (which will in turn call their destructors)
-	for(int i = 0; i < children.size(); i++)
-	{
-		delete children[i];
-	}
-	children.clear();
-
 	//Deallocate
 	delete buffer;
 	del_panel(panel);
@@ -264,8 +257,8 @@ Window* CursesWindow::makeChildCentered(int w, int h)
  * to appear on-screen.*/
 Window* CursesWindow::makeChild(int w, int h, int x, int y)
 {
-	Window* child = new CursesWindow(parent, w, h, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
-	children.push_back(child);
+	Window* child = new CursesWindow(this, w, h, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
+	children.insert(child);
 
 	return child;
 }
@@ -300,8 +293,8 @@ Window* CursesWindow::makeChildWithContentCentered(const string& content)
  */
 Window* CursesWindow::makeChildWithContent(const string& content, int x, int y)
 {
-	Window* child = new CursesWindow(parent, content, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
-	children.push_back(child);
+	Window* child = new CursesWindow(this, content, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
+	children.insert(child);
 
 	return child;
 }

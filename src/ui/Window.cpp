@@ -14,6 +14,41 @@ Window::Window(Window* parent)
 
 }
 
+Window::~Window()
+{
+	//This allows child Windows to be deleted by themselves - ensures parent won't be holding pointer to them
+	if (parent != NULL)
+	{
+		parent->detachChild(this);
+	}
+
+	//Destroy this Window's children (which will in turn call their destructors to remove themselves from the children set)
+	set<Window*> childrenToDelete(children); //so we aren't modifying the set we're iterating over
+	for (std::set<Window*>::iterator it = childrenToDelete.begin(); it != childrenToDelete.end(); it++)
+	{
+		delete (*it);
+	}
+}
+
+/* If the given Window is in this Window's set of children, it is removed.
+* It is NOT deleted though.
+*/
+void Window::detachChild(Window* child)
+{
+	if (child == NULL)
+	{
+		return;
+	}
+
+	set<Window*>::iterator it = children.find(child);
+	if (it == children.end())
+	{
+		return;
+	}
+
+	children.erase(it);
+}
+
 /* returns true if the given x, y values fall within ALL of the given min and
  * max values for their respective dimensions, false otherwise.
  */
