@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F01A002C-E485-47F4-A7F0-1977A2A32229}</ProjectGuid>
+    <ProjectGuid>{6B5584A8-52E2-409C-8AB3-6D60ED66C397}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -106,7 +106,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\ui\CursesWindow.cpp" />
     <ClCompile Include="src\ui\CursesWindowBuffer.cpp" />
     <ClCompile Include="src\ui\ExpandableBuffer2D.cpp">
@@ -115,6 +117,8 @@
     <ClCompile Include="src\ui\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="deps\pdcurses-3.4\include\curses.h" />
+    <ClInclude Include="deps\pdcurses-3.4\include\panel.h" />
     <ClInclude Include="src\curseslib.h" />
     <ClInclude Include="src\ui\CursesWindow.h" />
     <ClInclude Include="src\ui\CursesWindowBuffer.h" />

@@ -21,10 +21,10 @@
     <ClCompile Include="src\ui\CursesWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ui\Window.cpp">
+    <ClCompile Include="src\ui\CursesWindowBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ui\CursesWindowBuffer.cpp">
+    <ClCompile Include="src\ui\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\ExpandableBuffer2D.cpp">
@@ -32,19 +32,25 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="deps\pdcurses-3.4\include\curses.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="deps\pdcurses-3.4\include\panel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\curseslib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ui\CursesWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\ui\CursesWindowBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ui\ExpandableBuffer2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
