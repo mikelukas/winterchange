@@ -1,6 +1,7 @@
+#include <algorithm>
 #include "../util/ExpandableBuffer2D.h"
 
-#include <algorithm>
+using namespace winterchange;
 
 template <typename T>
 ExpandableBuffer2D<T>::ExpandableBuffer2D(int rows, int cols, T defaultVal)

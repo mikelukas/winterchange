@@ -1,5 +1,7 @@
 #include "CursesWindow.h"
 
+using namespace winterchange;
+
 CursesWindow::CursesWindow(int w, int h)
 {
 	init("", w, h, 0, 0);

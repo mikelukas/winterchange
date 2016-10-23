@@ -2,6 +2,7 @@
 #include "CursesWindowBuffer.h"
 
 using std::min;
+using namespace winterchange;
 
 /* Creates a buffer of size rows x cols, defaulted with spaces */
 CursesWindowBuffer::CursesWindowBuffer(int rows, int cols)
