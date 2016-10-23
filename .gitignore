@@ -1,5 +1,6 @@
 ### Build Artifacts ###
 /Debug/
+/Release/
 
 ### Eclipse Files ###
 # User-specific files
