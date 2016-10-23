@@ -1,5 +1,5 @@
-#include "ui/CursesWindow.h"
-#include "ui/CursesWindowBuffer.h"
+#include "impl/curses/CursesWindow.h"
+#include "impl/curses/CursesWindowBuffer.h"
 
 WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);

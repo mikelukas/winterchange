@@ -1,5 +1,6 @@
+#include "../util/ExpandableBuffer2D.h"
+
 #include <algorithm>
-#include "ExpandableBuffer2D.h"
 
 template <typename T>
 ExpandableBuffer2D<T>::ExpandableBuffer2D(int rows, int cols, T defaultVal)

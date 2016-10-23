@@ -1,8 +1,8 @@
-#ifndef UI_CURSESWINDOW_H_
-#define UI_CURSESWINDOW_H_
+#ifndef IMPL_CURSES_CURSESWINDOW_H_
+#define IMPL_CURSES_CURSESWINDOW_H_
 
 #include <panel.h>
-#include "Window.h"
+#include "../../Window.h"
 #include "CursesWindowBuffer.h"
 
 /* Implementation of Window interface using ncurses/PDcurses to draw the window

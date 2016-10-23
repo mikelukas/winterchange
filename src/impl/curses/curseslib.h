@@ -1,5 +1,5 @@
-#ifndef CURSESLIB_H_
-#define CURSESLIB_H_
+#ifndef IMPL_CURSES_CURSESLIB_H_
+#define IMPL_CURSES_CURSESLIB_H_
 
 #ifdef WIN32
 #include <curses.h>

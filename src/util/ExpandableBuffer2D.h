@@ -1,5 +1,5 @@
-#ifndef UI_EXPANDABLEBUFFER2D_H_
-#define UI_EXPANDABLEBUFFER2D_H_
+#ifndef UTIL_EXPANDABLEBUFFER2D_H_
+#define UTIL_EXPANDABLEBUFFER2D_H_
 
 /* Contains a 2D matrix of content (determined by T), which can be written to
  * at any coordinates, and will automatically expand if an attempt to write to
@@ -30,6 +30,6 @@ class ExpandableBuffer2D
 		virtual void expand(int newRows, int newCols);
 };
 
-#include "ExpandableBuffer2D.cpp"
+#include "../util/ExpandableBuffer2D.cpp"
 
 #endif

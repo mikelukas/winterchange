@@ -1,8 +1,8 @@
-#ifndef UI_CURSESWINDOWBUFFER_H_
-#define UI_CURSESWINDOWBUFFER_H_
+#ifndef IMPL_CURSES_CURSESWINDOWBUFFER_H_
+#define IMPL_CURSES_CURSESWINDOWBUFFER_H_
 
-#include "ExpandableBuffer2D.h"
-#include "../curseslib.h"
+#include "../../util/ExpandableBuffer2D.h"
+#include "curseslib.h"
 
 /* Holds a buffer of curses chtype, with the ability to flush to a window
  */
