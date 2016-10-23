@@ -13,7 +13,8 @@ winterchange is licensed under the terms of the Mozilla Public License v2.0, ava
 
 Currently do not have a IDE-independent build process that just uses make files. May add down the road.
 
-Also, presently the library does not have a build configuration which builds to a library file; instead an executable is still being built which tests various functions of the library.  This will be changed soon so that winterchange can be linked into other projects.
+Winterchange can be built in a Debug configuration, which creates an executable that will run tests in main.cpp, or a Release
+configuration, which builds winterchange as a dynamic library.
 
 ### Mac OS X
 
@@ -27,9 +28,18 @@ Pre-requisites:
 2. From the import wizard, choose General -> Existing Projects into Workspace
 3. In Select Root Directory, browse to the folder to which you cloned winterchange
 4. Ensure the winterchange project is checked in the list, and click Finish
-5. Click on winterchange in the project explorer and choose Build Project (or Build All, or Cmd-B) from the Project Menu
 
-If build is successful, `winterchange` executable should be placed in Debug sub folder of project root folder.
+#### Building to Debug (default) 
+1. Click on winterchange in the project explorer and choose Properties.
+2. Click C/C++ Build in Project Properties, then click Manage Configurations in the pane to the right and ensure Debug is set as the active configuration.
+3. Click on winterchange in the project explorer and choose Build Project (or Build All, or Cmd-B) from the Project Menu
+
+If build is successful, `winterchange` executable should be placed in Debug subfolder of the project root folder.
+
+#### Building for Release 
+- Follow the steps above for Debug, except set Release as the active configuration.
+
+If build is successful, `libwinterchange.dylib` library should be placed in the Release subfolder of the project root folder.
 
 ### Windows
 
@@ -41,3 +51,7 @@ Pre-requisites:
 3. Go to Build and choose Build Solution or Build winterchange with the winterchange project selected
 
 If build is successful, `winterchange.exe` should be placed in Debug sub folder of project root folder.
+
+## Linking against winterchange
+
+TBD
