@@ -106,24 +106,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="src\ui\CursesWindow.cpp" />
-    <ClCompile Include="src\ui\CursesWindowBuffer.cpp" />
-    <ClCompile Include="src\ui\ExpandableBuffer2D.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="src\ui\Window.cpp" />
+    <ClInclude Include="deps\pdcurses-3.4\include\panel.h" />
+    <ClInclude Include="src\impl\curses\curseslib.h" />
+    <ClInclude Include="src\impl\curses\CursesWindow.h" />
+    <ClInclude Include="src\impl\curses\CursesWindowBuffer.h" />
+    <ClInclude Include="src\util\ExpandableBuffer2D.h" />
+    <ClInclude Include="src\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="deps\pdcurses-3.4\include\curses.h" />
-    <ClInclude Include="deps\pdcurses-3.4\include\panel.h" />
-    <ClInclude Include="src\curseslib.h" />
-    <ClInclude Include="src\ui\CursesWindow.h" />
-    <ClInclude Include="src\ui\CursesWindowBuffer.h" />
-    <ClInclude Include="src\ui\ExpandableBuffer2D.h" />
-    <ClInclude Include="src\ui\Window.h" />
+    <ClCompile Include="src\impl\curses\CursesWindow.cpp" />
+    <ClCompile Include="src\impl\curses\CursesWindowBuffer.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\util\ExpandableBuffer2D.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
