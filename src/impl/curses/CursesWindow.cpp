@@ -2,11 +2,13 @@
 
 using namespace winterchange;
 
+EXTERNAL_FUNC
 CursesWindow::CursesWindow(int w, int h)
 {
 	init("", w, h, 0, 0);
 }
 
+EXTERNAL_FUNC
 CursesWindow::CursesWindow(const string& content)
 {
 	int w, h;
@@ -14,11 +16,13 @@ CursesWindow::CursesWindow(const string& content)
 	init(content, w, h, 0, 0);
 }
 
+EXTERNAL_FUNC
 CursesWindow::CursesWindow(int w, int h, int x, int y)
 {
 	init("", w, h, x, y);
 }
 
+EXTERNAL_FUNC
 CursesWindow::CursesWindow(const string& content, int x, int y)
 {
 	int w,h;
@@ -26,12 +30,14 @@ CursesWindow::CursesWindow(const string& content, int x, int y)
 	init(content, w, h, x, y);
 }
 
+EXTERNAL_FUNC
 CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
 	: Window(parent)
 {
 	init("", w, h, x, y);
 }
 
+EXTERNAL_FUNC
 CursesWindow::CursesWindow(Window* parent, const string& content, int x, int y)
 	: Window(parent)
 {
@@ -40,6 +46,7 @@ CursesWindow::CursesWindow(Window* parent, const string& content, int x, int y)
 	init(content, w, h, x, y);
 }
 
+EXTERNAL_FUNC
 CursesWindow::~CursesWindow()
 {
 	//Deallocate
@@ -127,6 +134,7 @@ void CursesWindow::buildWindow(int rows, int cols, int row, int col)
 /* Calculates the width of the window by getting the max and beginning y, and
  * returning the difference.
  */
+EXTERNAL_FUNC
 int CursesWindow::getWidth() const
 {
 	return getmaxx(win);
@@ -135,12 +143,14 @@ int CursesWindow::getWidth() const
 /* Calculates the height of the window by getting the max and beginning x, and
  * returning the difference.
  */
+EXTERNAL_FUNC
 int CursesWindow::getHeight() const
 {
 	return getmaxy(win);
 }
 
 /* Resizes relative to the current top left corner of window */
+EXTERNAL_FUNC
 void CursesWindow::resize(int w, int h)
 {
 	int currX, currY;
@@ -150,6 +160,7 @@ void CursesWindow::resize(int w, int h)
 }
 
 /* Resizes window and places top left corner at given (x, y) coords */
+EXTERNAL_FUNC
 void CursesWindow::resize(int w, int h, int x, int y)
 {
 	wclear(win);
@@ -158,12 +169,14 @@ void CursesWindow::resize(int w, int h, int x, int y)
 }
 
 /* Get X position (column number) of top-left corner of window. */
+EXTERNAL_FUNC
 int CursesWindow::getX() const
 {
 	return getbegx(win);
 }
 
 /* Get Y position (row number) of top-left corner of window. */
+EXTERNAL_FUNC
 int CursesWindow::getY() const
 {
 	return getbegy(win);
@@ -172,6 +185,7 @@ int CursesWindow::getY() const
 /* Moves top-left corner of window to be at given (x,y) aka (col, row) coords.
  * If new coords are out of bounds, adjusts them to the nearest point in bounds.
  */
+EXTERNAL_FUNC
 void CursesWindow::move(int x, int y)
 {
 	//Ensure window is moved to a point within bounds
@@ -183,6 +197,7 @@ void CursesWindow::move(int x, int y)
 }
 
 /* Gets the current title set in the top of the window */
+EXTERNAL_FUNC
 const string& CursesWindow::getTitle() const
 {
 	return title;
@@ -193,6 +208,7 @@ const string& CursesWindow::getTitle() const
  *
  * Title is truncated if it is longer than the window width.
  * */
+EXTERNAL_FUNC
 void CursesWindow::setTitle(const string& newTitle)
 {
 	int widthNoCorners = getWidth()-2; //-2 to avoid writing on corners
@@ -232,6 +248,7 @@ void CursesWindow::setTitle(const string& newTitle)
 /* Allocates a new CursesWindow with the given width and height, and its top
  * left corner in the top left corner of the parent, within its borders. If this
  * causes the child to appear off-screen, it will be moved to be on-screen.*/
+EXTERNAL_FUNC
 Window* CursesWindow::makeChild(int w, int h)
 {
 	return makeChild(w, h, 0, 0); //0,0 relative to parent content area
@@ -241,6 +258,7 @@ Window* CursesWindow::makeChild(int w, int h)
  * left corner set to center it relative to parent, within its borders.
  * If centering would move the child's top-left corner off-screen, it will then
  * be moved to be on screen.*/
+EXTERNAL_FUNC
 Window* CursesWindow::makeChildCentered(int w, int h)
 {
 	//ensure requested child size fits within parent borders
@@ -257,6 +275,7 @@ Window* CursesWindow::makeChildCentered(int w, int h)
  * left corner at position (x,y) relative to parent content area (i.e. within
  * its borders).  If absolute (x,y) of child ends up off-screen, child is moved
  * to appear on-screen.*/
+EXTERNAL_FUNC
 Window* CursesWindow::makeChild(int w, int h, int x, int y)
 {
 	Window* child = new CursesWindow(this, w, h, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
@@ -269,6 +288,7 @@ Window* CursesWindow::makeChild(int w, int h, int x, int y)
  * sized to fit the given text, with top-left corner in the top-left corner
  * inside this Window's borders.
  */
+EXTERNAL_FUNC
 Window* CursesWindow::makeChildWithContent(const string& content)
 {
 	return makeChildWithContent(content, 0,0);
@@ -278,6 +298,7 @@ Window* CursesWindow::makeChildWithContent(const string& content)
  * sized to fit the given text, centered within this window.  Window dimensions
  * will be shrunken to fit on screen if they spill out.
  */
+EXTERNAL_FUNC
 Window* CursesWindow::makeChildWithContentCentered(const string& content)
 {
 	int w,h;
@@ -293,6 +314,7 @@ Window* CursesWindow::makeChildWithContentCentered(const string& content)
  * sized to fit the given text, with top-left corner positioned at the given
  * x,y coordinates relative to the area within the window's borders.
  */
+EXTERNAL_FUNC
 Window* CursesWindow::makeChildWithContent(const string& content, int x, int y)
 {
 	Window* child = new CursesWindow(this, content, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
@@ -305,6 +327,7 @@ Window* CursesWindow::makeChildWithContent(const string& content, int x, int y)
  * otherwise they will be ignored. refreshContent() must be called afterward
  * unless resizing window or replacing current text afterward.
  */
+EXTERNAL_FUNC
 void CursesWindow::setPadding(int top, int bottom, int left, int right)
 {
 	setPaddingTop(top);
@@ -317,6 +340,7 @@ void CursesWindow::setPadding(int top, int bottom, int left, int right)
  * otherwise it will be ignored. refreshContent() must be called afterward
  * unless resizing window or replacing current text afterward.
  */
+EXTERNAL_FUNC
 void CursesWindow::setPaddingTop(int paddingT)
 {
 	if(paddingT < 0) {
@@ -330,6 +354,7 @@ void CursesWindow::setPaddingTop(int paddingT)
  * otherwise it will be ignored. refreshContent() must be called afterward
  * unless resizing window or replacing current text afterward.
  */
+EXTERNAL_FUNC
 void CursesWindow::setPaddingBottom(int paddingB)
 {
 	if(paddingB < 0) {
@@ -343,6 +368,7 @@ void CursesWindow::setPaddingBottom(int paddingB)
  * otherwise it will be ignored. refreshContent() must be called afterward
  * unless resizing window or replacing current text afterward.
  */
+EXTERNAL_FUNC
 void CursesWindow::setPaddingLeft(int paddingL)
 {
 	if(paddingL < 0) {
@@ -356,6 +382,7 @@ void CursesWindow::setPaddingLeft(int paddingL)
  * otherwise it will be ignored. refreshContent() must be called afterward
  * unless resizing window or replacing current text afterward.
  */
+EXTERNAL_FUNC
 void CursesWindow::setPaddingRight(int paddingR)
 {
 	if(paddingR < 0) {
@@ -368,6 +395,7 @@ void CursesWindow::setPaddingRight(int paddingR)
 /** Overwrites entire content area of window (area within borders) with spaces.
  *  updates panels.
  * */
+EXTERNAL_FUNC
 void CursesWindow::clearContent()
 {
 	for(int row = 1; row < getHeight()-1; row++)
@@ -382,6 +410,7 @@ void CursesWindow::clearContent()
  * padding to make content lay itself out again within window observing new
  * padding sizes.
  */
+EXTERNAL_FUNC
 void CursesWindow::refreshContent()
 {
 	buffer->clear();
@@ -392,6 +421,7 @@ void CursesWindow::refreshContent()
 /* Clears content drawn to the window, then flushes the buffer to it again,
  * then calls doupdate() on ncurses.
  */
+EXTERNAL_FUNC
 void CursesWindow::redraw()
 {
 	clearContent();
@@ -403,6 +433,7 @@ void CursesWindow::redraw()
  * buffer, flushing starts at a row position 1 less row from previous pos.
  * Cannot decrement beyond 0.
  */
+EXTERNAL_FUNC
 void CursesWindow::scrollUp()
 {
 	if(scrollRowOffset > 0) //this implicitly considers if content is shorter than content area, since offset would be 0 if it is shorter, and thus no scrolling would happen
@@ -415,6 +446,7 @@ void CursesWindow::scrollUp()
  * buffer, flushing starts at a row position 1 more row ahead from previously.
  * Won't scroll past last row in buffer.
  */
+EXTERNAL_FUNC
 void CursesWindow::scrollDown()
 {
 	if(contentMaxRow >= getHeight()-2 - paddingT - paddingB //can only scroll down if content is taller than content area
@@ -449,6 +481,7 @@ void CursesWindow::vScrollTo(int row)
  * the buffer, flushing starts at a row that will result in top row of the
  * content being the first row of the buffer.
  */
+EXTERNAL_FUNC
 void CursesWindow::scrollToTop()
 {
 	scrollRowOffset = 0;
@@ -461,6 +494,7 @@ void CursesWindow::scrollToTop()
  * row of buffer will be the bottom row-window height.  If content is smaller
  * than the content area, it will all be displayed, with the top row of the buffer
  */
+EXTERNAL_FUNC
 void CursesWindow::scrollToBottom()
 {
 	int contentAreaHeight = getHeight()-2 - paddingT - paddingB;
@@ -478,6 +512,7 @@ void CursesWindow::scrollToBottom()
  * buffer, flushing starts at a col position 1 less col from previous pos.
  * Cannot decrement beyond 0.
  */
+EXTERNAL_FUNC
 void CursesWindow::scrollLeft()
 {
 	if(scrollColOffset > 0) //this implicitly considers if content is shorter than content area, since offset would be 0 if it is shorter, and thus no scrolling would happen
@@ -492,6 +527,7 @@ void CursesWindow::scrollLeft()
  * Cannot scroll right if wordWrap is enabled, b/c content is purposely reshaped
  * to fit the width of the content area in this case and can't be wider.
  */
+EXTERNAL_FUNC
 void CursesWindow::scrollRight()
 {
 	if(!wordWrap
@@ -506,6 +542,7 @@ void CursesWindow::scrollRight()
  * the buffer, flushing starts at a col that will result in leftmost col of the
  * content being the first col of the buffer.
  */
+EXTERNAL_FUNC
 void CursesWindow::scrollToLeftEnd()
 {
 	scrollColOffset = 0;
@@ -520,6 +557,7 @@ void CursesWindow::scrollToLeftEnd()
  * leftmost col of the buffer.
  * Cannot scroll to the right end if word-wrap is enabled.
  */
+EXTERNAL_FUNC
 void CursesWindow::scrollToRightEnd()
 {
 	if(wordWrap)
@@ -540,6 +578,7 @@ void CursesWindow::scrollToRightEnd()
 
 /* Saves the given coordinates as the next buffer position at which fillWithText
  * will write when appending text.*/
+EXTERNAL_FUNC
 void CursesWindow::saveNextWriteCoords(int row, int col)
 {
 	nextWriteRow = row;
@@ -668,6 +707,7 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
  * of bounds to the right or bottom, characters will be written into the buffer
  * but not displayed on screen.
  */
+EXTERNAL_FUNC
 void CursesWindow::writeCharAt(char c, int x, int y)
 {
 	if(x < 0 || y < 0)
@@ -693,6 +733,7 @@ void CursesWindow::writeCharAt(char c, int x, int y)
  * of bounds to the right or bottom, characters will be written into the buffer
  * but not displayed on screen.
  */
+EXTERNAL_FUNC
 void CursesWindow::writeStrAt(const string& str, int x, int y)
 {
 	if(x < 0 || y < 0)
@@ -723,6 +764,7 @@ void CursesWindow::writeStrAt(const string& str, int x, int y)
  * If word wrap is being enabled, the scroll column offset will be reset to the
  * left edge, b/c horizontal scroll cannot happen when words wrap in this way.
  */
+EXTERNAL_FUNC
 void CursesWindow::setWordWrap(bool wordWrap)
 {
 	Window::setWordWrap(wordWrap);
@@ -730,6 +772,7 @@ void CursesWindow::setWordWrap(bool wordWrap)
 }
 
 /* Overwrites all text in the content area with the given text.*/
+EXTERNAL_FUNC
 void CursesWindow::replaceText(const string& text)
 {
 	content = text;
@@ -738,6 +781,7 @@ void CursesWindow::replaceText(const string& text)
 
 /* Adds text to the content area at the next available position for writing
  * after the existing content.*/
+EXTERNAL_FUNC
 void CursesWindow::appendText(const string& text)
 {
 	appendText(text, false);
@@ -746,6 +790,7 @@ void CursesWindow::appendText(const string& text)
 /* Adds text to the content area at the next available position for writing
  * after the existing content, optionally starting on a new line after that
  * content if newline is true.*/
+EXTERNAL_FUNC
 void CursesWindow::appendText(const string& text, bool newline)
 {
 	string textToWrite = (newline ? "\n" + text : text); //need to make a new string since text is a const

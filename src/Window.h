@@ -3,6 +3,7 @@
 
 #include <set>
 #include <string>
+#include "LibMacros.h"
 
 using std::set;
 using std::string;
@@ -11,7 +12,7 @@ namespace winterchange
 {
 	/* Abstract base class for manipulating windows; intended to keep details of the
 	 * underlying low-level window implementation abstract */
-	class Window
+	class EXTERNAL_CLASS Window
 	{
 		protected:
 

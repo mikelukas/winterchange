@@ -35,6 +35,7 @@ Window::~Window()
 /* If the given Window is in this Window's set of children, it is removed.
 * It is NOT deleted though.
 */
+EXTERNAL_FUNC
 void Window::detachChild(Window* child)
 {
 	if (child == NULL)

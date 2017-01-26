@@ -10,7 +10,7 @@ namespace winterchange
 	/* Implementation of Window interface using ncurses/PDcurses to draw the window
 	 * and manage its panel
 	 */
-	class CursesWindow : public Window
+	class EXTERNAL_CLASS CursesWindow : public Window
 	{
 		protected:
 
