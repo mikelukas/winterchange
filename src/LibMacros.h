@@ -3,6 +3,8 @@
 
 	#ifdef LIB_BUILD
 		#ifdef WIN32
+			#define EXTERNAL_CLASS __declspec(dllexport)
+			#define EXTERNAL_FUNC __declspec(dllexport)
 		#else
 			// Symbolic name for visibility("default") attribute.
 			#define EXTERNAL_CLASS
@@ -10,7 +12,8 @@
 		#endif
 	#else
 		#ifdef WIN32
-			//TODO
+			#define EXTERNAL_CLASS __declspec(dllimport)
+			#define EXTERNAL_FUNC __declspec(dllimport)
 		#else
 			#define EXTERNAL_CLASS
 			#define EXTERNAL_FUNC
