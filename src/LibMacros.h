@@ -1,7 +1,10 @@
 #ifndef LIBMACROS_H_
 #define LIBMACROS_H_
 
-	#ifdef LIB_BUILD
+	#ifdef INTERNAL
+		#define EXTERNAL_CLASS
+		#define EXTERNAL_FUNC
+    #elif LIB_BUILD
 		#ifdef WIN32
 			#define EXTERNAL_CLASS __declspec(dllexport)
 			#define EXTERNAL_FUNC __declspec(dllexport)
