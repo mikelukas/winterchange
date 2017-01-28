@@ -2,11 +2,9 @@
 #define WINDOW_H_
 
 #include <set>
-#include <string>
 #include "LibMacros.h"
 
 using std::set;
-using std::string;
 
 namespace winterchange
 {
@@ -17,7 +15,7 @@ namespace winterchange
 		protected:
 
 			Window* parent;
-			set<Window*> children;
+			set<Window*>* children;
 
 			bool wordWrap;
 
@@ -35,8 +33,8 @@ namespace winterchange
 			virtual int getY() const = 0;
 			virtual void move(int x, int y) = 0;
 
-			virtual const string& getTitle() const = 0;
-			virtual void setTitle(const string&) = 0;
+			virtual const char* getTitle() const = 0;
+			virtual void setTitle(const char*) = 0;
 
 			virtual void setPadding(int top, int bottom, int left, int right) = 0;
 			virtual void setPaddingTop(int) = 0;
@@ -61,27 +59,26 @@ namespace winterchange
 			virtual void scrollToRightEnd() = 0;
 
 			virtual void writeCharAt(char, int x, int y) = 0;
-			virtual void writeStrAt(const string&, int x, int y) = 0;
+			virtual void writeStrAt(const char*, int x, int y) = 0;
 
 			virtual void setWordWrap(bool wordWrap) { this->wordWrap = wordWrap; }
-			virtual void replaceText(const string&) = 0;
-			virtual void appendText(const string&) = 0;
-			virtual void appendText(const string&, bool newline) = 0;
+			virtual void replaceText(const char*) = 0;
+			virtual void appendText(const char*) = 0;
 
 			virtual Window* makeChild(int w, int h) = 0; //adds child at 0,0 relative to this window's top-left corner
 			virtual Window* makeChildCentered(int w, int h) = 0;
 			virtual Window* makeChild(int w, int h, int x, int y) = 0;
 
-			virtual Window* makeChildWithContent(const string&) = 0;
-			virtual Window* makeChildWithContentCentered(const string&) = 0;
-			virtual Window* makeChildWithContent(const string&, int x, int y) = 0;
+			virtual Window* makeChildWithContent(const char*) = 0;
+			virtual Window* makeChildWithContentCentered(const char*) = 0;
+			virtual Window* makeChildWithContent(const char*, int x, int y) = 0;
 
 			virtual Window* getParent() { return parent; }
 			virtual void detachChild(Window*);
 	};
 
 	bool isWithinBounds(int x, int y, int minX, int minY, int maxX, int maxY);
-	void getBoxSizeForText(const string& text, int& textW, int& textH, int hBorderSizeSum, int vBorderSizeSum);
+	void getBoxSizeForText(const char* text, int& textW, int& textH, int hBorderSizeSum, int vBorderSizeSum);
 	int constrainValue(int value, int min, int max);
 	bool isWhitespaceChar(char);
 }

@@ -67,8 +67,8 @@ int windowFrameworkTest() {
 
 	getch();
 
-	//Test that appended text can be put on new line if desired.
-	myWin->appendText("j klmop qrs.", true);
+	//Test that appended text can be put on new line.
+	myWin->appendText("\nj klmop qrs.");
 	doupdate();
 
 	getch();

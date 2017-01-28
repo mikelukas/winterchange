@@ -6,14 +6,14 @@ Window::Window()
 	: parent(NULL),
 	  wordWrap(false)
 {
-
+	children = new set<Window*>();
 }
 
 Window::Window(Window* parent)
 	: parent(parent),
 	  wordWrap(false)
 {
-
+	children = new set<Window*>();
 }
 
 Window::~Window()
@@ -25,11 +25,13 @@ Window::~Window()
 	}
 
 	//Destroy this Window's children (which will in turn call their destructors to remove themselves from the children set)
-	set<Window*> childrenToDelete(children); //so we aren't modifying the set we're iterating over
+	set<Window*> childrenToDelete(*children); //so we aren't modifying the set we're iterating over
 	for (std::set<Window*>::iterator it = childrenToDelete.begin(); it != childrenToDelete.end(); it++)
 	{
 		delete (*it);
 	}
+
+	delete children;
 }
 
 /* If the given Window is in this Window's set of children, it is removed.
@@ -43,13 +45,13 @@ void Window::detachChild(Window* child)
 		return;
 	}
 
-	set<Window*>::iterator it = children.find(child);
-	if (it == children.end())
+	set<Window*>::iterator it = children->find(child);
+	if (it == children->end())
 	{
 		return;
 	}
 
-	children.erase(it);
+	children->erase(it);
 }
 
 /* returns true if the given x, y values fall within ALL of the given min and
@@ -68,13 +70,13 @@ bool winterchange::isWithinBounds(int x, int y, int minX, int minY, int maxX, in
  * and top+bottom borders, to be added into the final dimensions set into textW
  * and textH. E.g. for 1-char borders, pass in a sizeSum of 2 (1 for each side).
  */
-void winterchange::getBoxSizeForText(const string& text, int& textW, int& textH, int hBorderSizeSum, int vBorderSizeSum)
+void winterchange::getBoxSizeForText(const char* text, int& textW, int& textH, int hBorderSizeSum, int vBorderSizeSum)
 {
 	int currLineLen = 0;
 	textW = 0;
 	textH = 1;
 
-	for(int i = 0; i < text.length(); i++)
+	for(int i = 0; text[i] != 0; i++)
 	{
 		if(text[i] != '\n')  //not end of line, keep counting
 		{

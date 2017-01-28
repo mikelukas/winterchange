@@ -9,7 +9,7 @@ CursesWindow::CursesWindow(int w, int h)
 }
 
 EXTERNAL_FUNC
-CursesWindow::CursesWindow(const string& content)
+CursesWindow::CursesWindow(const char* content)
 {
 	int w, h;
 	getBoxSizeForText(content, w, h, 2, 2); //2 for borders on each side
@@ -23,7 +23,7 @@ CursesWindow::CursesWindow(int w, int h, int x, int y)
 }
 
 EXTERNAL_FUNC
-CursesWindow::CursesWindow(const string& content, int x, int y)
+CursesWindow::CursesWindow(const char* content, int x, int y)
 {
 	int w,h;
 	getBoxSizeForText(content, w, h, 2, 2); //2 for borders on each side
@@ -38,7 +38,7 @@ CursesWindow::CursesWindow(Window* parent, int w, int h, int x, int y)
 }
 
 EXTERNAL_FUNC
-CursesWindow::CursesWindow(Window* parent, const string& content, int x, int y)
+CursesWindow::CursesWindow(Window* parent, const char* content, int x, int y)
 	: Window(parent)
 {
 	int w, h;
@@ -50,6 +50,8 @@ EXTERNAL_FUNC
 CursesWindow::~CursesWindow()
 {
 	//Deallocate
+	delete title;
+	delete content;
 	delete buffer;
 	del_panel(panel);
 	delwin(win);
@@ -72,14 +74,14 @@ void CursesWindow::init(const string& content, int w, int h, int x, int y)
 	contentMaxCol = 0;
 	scrollRowOffset = 0;
 	scrollColOffset = 0;
-	title = "";
-	this->content = "";
+	title = new string();
+	this->content = new string();
 	buffer = NULL;
 
 	buildWindow(h, w, y, x);
 
 	if(content.length() > 0) {
-		replaceText(content);
+		fillWithText(content, 0, 0);
 	}
 }
 
@@ -118,7 +120,7 @@ void CursesWindow::buildWindow(int rows, int cols, int row, int col)
 
 	win = newwin(adjustedRows, adjustedCols, adjustedRow, adjustedCol);
 	box(win, 0, 0); //0,0 is default border characters for horizontal and vertical lines
-	setTitle(title);
+	setTitle(*title);
 
 	if(panel == NULL) {
 		panel = new_panel(win);
@@ -165,7 +167,7 @@ void CursesWindow::resize(int w, int h, int x, int y)
 {
 	wclear(win);
 	buildWindow(h, w, y, x); //TODO: use wresize instead, still replace panel, and update panels. do move in a separate move_panel step after resize, or don't allow new x,y at all
-	replaceText(content);
+	fillWithText(*content, 0, 0);
 }
 
 /* Get X position (column number) of top-left corner of window. */
@@ -198,9 +200,9 @@ void CursesWindow::move(int x, int y)
 
 /* Gets the current title set in the top of the window */
 EXTERNAL_FUNC
-const string& CursesWindow::getTitle() const
+const char* CursesWindow::getTitle() const
 {
-	return title;
+	return title->c_str();
 }
 
 /* Prints the given title string centered in the top border of the window, and
@@ -209,17 +211,30 @@ const string& CursesWindow::getTitle() const
  * Title is truncated if it is longer than the window width.
  * */
 EXTERNAL_FUNC
+void CursesWindow::setTitle(const char* newTitle)
+{
+	string stlNewTitle(newTitle);
+	setTitle(stlNewTitle);
+}
+
+/* Internal inmplementation using STL string class, since passing STL class
+ * instances across DLL boundaries is cumbersome.
+ * Prints the given title string centered in the top border of the window, and
+ * updates title field tracked by this instance.
+ *
+ * Title is truncated if it is longer than the window width.
+ */
 void CursesWindow::setTitle(const string& newTitle)
 {
 	int widthNoCorners = getWidth()-2; //-2 to avoid writing on corners
 
 	//clear old title if there was one
-	if(!title.empty())
+	if(!title->empty())
 	{
 		mvwhline(win, 0, 1, 0, widthNoCorners); //0 for border char uses default char, x=1 to start after corner char
 	}
 
-	title = newTitle;
+	(*title) = newTitle;
 
 	//Done drawing if new title is empty string;
 	if(newTitle.length() == 0)
@@ -279,7 +294,7 @@ EXTERNAL_FUNC
 Window* CursesWindow::makeChild(int w, int h, int x, int y)
 {
 	Window* child = new CursesWindow(this, w, h, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
-	children.insert(child);
+	children->insert(child);
 
 	return child;
 }
@@ -289,7 +304,7 @@ Window* CursesWindow::makeChild(int w, int h, int x, int y)
  * inside this Window's borders.
  */
 EXTERNAL_FUNC
-Window* CursesWindow::makeChildWithContent(const string& content)
+Window* CursesWindow::makeChildWithContent(const char* content)
 {
 	return makeChildWithContent(content, 0,0);
 }
@@ -299,7 +314,7 @@ Window* CursesWindow::makeChildWithContent(const string& content)
  * will be shrunken to fit on screen if they spill out.
  */
 EXTERNAL_FUNC
-Window* CursesWindow::makeChildWithContentCentered(const string& content)
+Window* CursesWindow::makeChildWithContentCentered(const char* content)
 {
 	int w,h;
 	getBoxSizeForText(content, w, h, 2, 2); //+2 for borders
@@ -315,10 +330,10 @@ Window* CursesWindow::makeChildWithContentCentered(const string& content)
  * x,y coordinates relative to the area within the window's borders.
  */
 EXTERNAL_FUNC
-Window* CursesWindow::makeChildWithContent(const string& content, int x, int y)
+Window* CursesWindow::makeChildWithContent(const char* content, int x, int y)
 {
 	Window* child = new CursesWindow(this, content, getX()+1 + x, getY()+1 + y);   //+1 so child position is relative to parent content area (area within borders)
-	children.insert(child);
+	children->insert(child);
 
 	return child;
 }
@@ -415,7 +430,7 @@ void CursesWindow::refreshContent()
 {
 	buffer->clear();
 	clearContent();
-	replaceText(content);
+	fillWithText(*content, 0, 0);
 }
 
 /* Clears content drawn to the window, then flushes the buffer to it again,
@@ -727,26 +742,27 @@ void CursesWindow::writeCharAt(char c, int x, int y)
 	}
 }
 
-/* Writes string directly into the window, relative to the top-left corner of
+/* Writes C-string directly into the window, relative to the top-left corner of
  * the content area (i.e. offset by borders + top-left padding).
  * If coordinates are negative, nothing will be written.  If coordinates are out
  * of bounds to the right or bottom, characters will be written into the buffer
  * but not displayed on screen.
  */
 EXTERNAL_FUNC
-void CursesWindow::writeStrAt(const string& str, int x, int y)
+void CursesWindow::writeStrAt(const char* str, int x, int y)
 {
 	if(x < 0 || y < 0)
 	{
 		return;
 	}
 
-	for(int i = 0; i < str.length(); i++)
+	int i = 0;
+	for(; str[i] != 0; i++)
 	{
 		buffer->writeAt((chtype) (str[i]), y + scrollRowOffset, x + scrollColOffset + i);
 	}
 
-	int maxX = x + scrollColOffset + str.length() - 1;
+	int maxX = x + scrollColOffset + i - 1; //i ends up being string length
 	int maxY = y + scrollRowOffset;
 	if(maxX > contentMaxCol)
 	{
@@ -773,30 +789,22 @@ void CursesWindow::setWordWrap(bool wordWrap)
 
 /* Overwrites all text in the content area with the given text.*/
 EXTERNAL_FUNC
-void CursesWindow::replaceText(const string& text)
+void CursesWindow::replaceText(const char* text)
 {
-	content = text;
-	fillWithText(text, 0, 0);
+	(*content) = text;
+	fillWithText(*content, 0, 0);
 }
 
 /* Adds text to the content area at the next available position for writing
  * after the existing content.*/
 EXTERNAL_FUNC
-void CursesWindow::appendText(const string& text)
+void CursesWindow::appendText(const char* text)
 {
-	appendText(text, false);
-}
-
-/* Adds text to the content area at the next available position for writing
- * after the existing content, optionally starting on a new line after that
- * content if newline is true.*/
-EXTERNAL_FUNC
-void CursesWindow::appendText(const string& text, bool newline)
-{
-	string textToWrite = (newline ? "\n" + text : text); //need to make a new string since text is a const
-	content += textToWrite;
+	string textToWrite(text);
+	(*content) += textToWrite;
 	fillWithText(textToWrite, nextWriteRow, nextWriteCol);
 }
+
 
 /* Tells the buffer to write its entire content to the content area of the
  * window.
