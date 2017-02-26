@@ -20,6 +20,8 @@ namespace winterchange
 			WINDOW* win;
 			PANEL* panel;
 
+			bool hidden;
+
 			int paddingT;
 			int paddingB;
 			int paddingL;
@@ -82,6 +84,9 @@ namespace winterchange
 			virtual void clearContent();
 			virtual void refreshContent();
 			virtual void redraw();
+
+			virtual void show();
+			virtual void hide();
 
 			virtual void scrollUp();
 			virtual void scrollDown();

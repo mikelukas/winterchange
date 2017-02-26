@@ -46,6 +46,9 @@ namespace winterchange
 			virtual void refreshContent() = 0;
 			virtual void redraw() = 0;
 
+			virtual void show() = 0;
+			virtual void hide() = 0;
+
 			virtual void scrollUp() = 0;
 			virtual void scrollDown() = 0;
 

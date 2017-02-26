@@ -246,6 +246,16 @@ int windowFrameworkTest() {
 
 	getch();
 
+	//Test hiding windows
+	child1->hide();
+
+	getch();
+
+	//Test showing windows
+	child1->show();
+
+	getch();
+
 	delete myWin;
 
 	fittedWindowTests();

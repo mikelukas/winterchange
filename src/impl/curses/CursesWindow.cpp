@@ -64,6 +64,7 @@ void CursesWindow::init(const string& content, int w, int h, int x, int y)
 {
 	win = NULL;
 	panel = NULL;
+	hidden = false;
 	paddingT = 0;
 	paddingB = 0;
 	paddingL = 0;
@@ -443,6 +444,38 @@ void CursesWindow::redraw()
 	flushBuffer();
 	doupdate();
 }
+
+/* Displays window if it was hidden. Calls update_panels and doupdate(), so the
+ * window will be displayed immediately.*/
+EXTERNAL_FUNC
+void CursesWindow::show()
+{
+	if(hidden)
+	{
+		show_panel(panel);
+		hidden = false;
+
+		update_panels();
+		doupdate();
+	}
+}
+
+/* Hides the window if it is not already hidden.  Calls update_panels and
+ * doupdate(), so window will be hidden immediately.
+ */
+EXTERNAL_FUNC
+void CursesWindow::hide()
+{
+	if(!hidden)
+	{
+		hide_panel(panel);
+		hidden = true;
+
+		update_panels();
+		doupdate();
+	}
+}
+
 
 /* Decrements scroll row offset, so that when content is flushed to window from
  * buffer, flushing starts at a row position 1 less row from previous pos.
