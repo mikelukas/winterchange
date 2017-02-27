@@ -80,6 +80,7 @@ void CursesWindow::init(const string& content, int w, int h, int x, int y)
 	buffer = NULL;
 
 	buildWindow(h, w, y, x);
+	saveNonMaxedSizeAndPos();
 
 	if(content.length() > 0) {
 		fillWithText(content, 0, 0);
@@ -162,13 +163,64 @@ void CursesWindow::resize(int w, int h)
 	resize(w, h, currX, currY);
 }
 
-/* Resizes window and places top left corner at given (x, y) coords */
+/* Resizes window and places top left corner at given (x, y) coords.  If the
+ * window was maximized, it will be toggled out of that mode. */
 EXTERNAL_FUNC
 void CursesWindow::resize(int w, int h, int x, int y)
 {
+	maximized = false;
+
 	wclear(win);
 	buildWindow(h, w, y, x); //TODO: use wresize instead, still replace panel, and update panels. do move in a separate move_panel step after resize, or don't allow new x,y at all
 	fillWithText(*content, 0, 0);
+}
+
+/* Records the current window size as the non-maximized size, so if the window
+ * is maximized, its original dimensions can be restored.
+ * Should be called after window construction or resize, rather than before,
+ * since passed-in dimensions and position may have needed to be adjusted to fit
+ * the actual console size.
+ * NOTE we don't do call this directly in buildWindow() since that method is
+ * used by resize(), which maximize in turn needs to use, which would overwrite
+ * our saved non-maxed values.*/
+EXTERNAL_FUNC
+void CursesWindow::saveNonMaxedSizeAndPos()
+{
+	nonMaxedW = getWidth();
+	nonMaxedH = getHeight();
+
+	nonMaxedX = getX();
+	nonMaxedY = getY();
+}
+
+/* Resizes window to fit the entire console, if it was not already maximized.
+ * Original dimensions and position are recorded, and can be restored by calling
+ * unmaximize().
+ */
+EXTERNAL_FUNC
+void CursesWindow::maximize()
+{
+	if(maximized) {
+		return;
+	}
+
+	saveNonMaxedSizeAndPos();
+	resize(COLS, LINES, 0, 0);
+	maximized = true; //must come after resize(), since resize will de-maximize the window
+}
+
+/* Resizes window back to its original size, and re-positions it at its original
+ * position prior to having been maximized.
+ */
+EXTERNAL_FUNC
+void CursesWindow::unmaximize()
+{
+	if(!maximized) {
+		return;
+	}
+
+	resize(nonMaxedW, nonMaxedH, nonMaxedX, nonMaxedY);
+	maximized = false;
 }
 
 /* Get X position (column number) of top-left corner of window. */

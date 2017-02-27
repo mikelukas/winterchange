@@ -177,6 +177,20 @@ int windowFrameworkTest() {
 
 	getch();
 
+	//Test maximizing fills the entire console
+	myWin->maximize();
+	myWin->setTitle("Maximized");
+	doupdate();
+
+	getch();
+
+	//Test that unmaximizing restores original size AND position of the window.
+	myWin->unmaximize();
+	myWin->setTitle("Unmaximized");
+	doupdate();
+
+	getch();
+
 	//Test resizing to size smaller than title
 	myWin->resize(5,5);
 	doupdate();

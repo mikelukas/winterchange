@@ -21,6 +21,13 @@ namespace winterchange
 			PANEL* panel;
 
 			bool hidden;
+			bool maximized;
+
+			int nonMaxedW;
+			int nonMaxedH;
+
+			int nonMaxedX;
+			int nonMaxedY;
 
 			int paddingT;
 			int paddingB;
@@ -46,6 +53,8 @@ namespace winterchange
 
 			virtual void setTitle(const string&);
 
+			virtual void saveNonMaxedSizeAndPos();
+
 			virtual void vScrollTo(int row);
 
 			virtual void fillWithText(const string&, int, int);
@@ -67,6 +76,9 @@ namespace winterchange
 
 			virtual void resize(int w, int h);
 			virtual void resize(int w, int h, int x, int y);
+
+			virtual void maximize();
+			virtual void unmaximize();
 
 			virtual int getX() const;
 			virtual int getY() const;

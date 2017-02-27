@@ -26,8 +26,12 @@ namespace winterchange
 
 			virtual int getWidth() const = 0;
 			virtual int getHeight() const = 0;
+
 			virtual void resize(int w, int h) = 0;
 			virtual void resize(int w, int h, int x, int y) = 0;
+
+			virtual void maximize() = 0;
+			virtual void unmaximize() = 0;
 
 			virtual int getX() const = 0;
 			virtual int getY() const = 0;
