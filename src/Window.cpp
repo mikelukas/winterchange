@@ -54,6 +54,54 @@ void Window::detachChild(Window* child)
 	children->erase(it);
 }
 
+/** Sets Top padding to be sized to be a given percentage of the Window content
+ * area height (i.e. border size will be subtracted from height).
+ *  -Truncates to nearest integer.
+ *  -Accepts values between 0 and 1.0 (being 100%).
+ *  -Padding will not be changed if passed values out of range.
+ */
+EXTERNAL_FUNC
+void Window::setPaddingTopPercent(double percent)
+{
+	setPaddingTop(percent * (getHeight()-2));
+}
+
+/** Sets Bottom padding to be sized to be a given percentage of the Window content
+ * area height (i.e. border size will be subtracted from height)..
+ *  -Truncates to nearest integer.
+ *  -Accepts values between 0 and 1.0 (being 100%).
+ *  -Padding will not be changed if passed values out of range.
+ */
+EXTERNAL_FUNC
+void Window::setPaddingBottomPercent(double percent)
+{
+	setPaddingBottom(percent * (getHeight()-2));
+}
+
+/** Sets Left padding to be sized to be a given percentage of the Window content
+ * area width (i.e. border size will be subtracted from width).
+ *  -Truncates to nearest integer.
+ *  -Accepts values between 0 and 1.0 (being 100%).
+ *  -Padding will not be changed if passed values out of range.
+ */
+EXTERNAL_FUNC
+void Window::setPaddingLeftPercent(double percent)
+{
+	setPaddingLeft(percent * (getWidth()-2));
+}
+
+/** Sets Right padding to be sized to be a given percentage of the Window content
+ * area width (i.e. border size will be subtracted from width)..
+ *  -Truncates to nearest integer.
+ *  -Accepts values between 0 and 1.0 (being 100%).
+ *  -Padding will not be changed if passed values out of range.
+ */
+EXTERNAL_FUNC
+void Window::setPaddingRightPercent(double percent)
+{
+	setPaddingRight(percent * (getWidth()-2));
+}
+
 /* Sets the padding on this window so that when the provided content is set,
  * it will be centered in the window.  Padding will be 0 in dimensions that
  * overflow the window.

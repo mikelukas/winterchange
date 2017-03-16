@@ -73,6 +73,17 @@ int windowFrameworkTest() {
 
 	getch();
 
+	//Test padding can be set using percentages
+	myWin->setTitle("Padding %");
+	myWin->setPaddingTopPercent(0.2);
+	myWin->setPaddingBottomPercent(0.6);
+	myWin->setPaddingLeftPercent(0.3);
+	myWin->setPaddingRightPercent(0.3);
+	myWin->refreshContent();
+	doupdate();
+
+	getch();
+
 	//Test centering ODD-sized content with padding
 	string contentToCenter = "01234 6789 123 567 90\n012345 789012345\n012 4567 90123\n\n\n0123456789 123.\n0.";
 	myWin->setTitle("Centered Content (Odd)");
