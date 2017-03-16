@@ -54,6 +54,44 @@ void Window::detachChild(Window* child)
 	children->erase(it);
 }
 
+/* Sets the padding on this window so that when the provided content is set,
+ * it will be centered in the window.  Padding will be 0 in dimensions that
+ * overflow the window.
+ */
+EXTERNAL_FUNC
+void Window::setPaddingToCenterContent(const char* text)
+{
+	int winW = getWidth(), winH = getHeight();
+	int boxW = 0, boxH = 0;
+	int horizBorderTotal = 2, vertBorderTotal = 2; //TODO when borders are toggleable these will vary
+
+	getBoxSizeForText(text, boxW, boxH, 0, 0);
+
+	if(boxW < winW)
+	{
+		int padHoriz = (winW-horizBorderTotal - boxW);
+		setPaddingLeft(padHoriz >> 1);
+		setPaddingRight(padHoriz % 2 == 0 ? padHoriz >> 1 : (padHoriz >> 1)+1);
+	}
+	else
+	{
+		setPaddingLeft(0);
+		setPaddingRight(0);
+	}
+
+	if(boxH < winH)
+	{
+		int padVert = (winH-vertBorderTotal - boxH);
+		setPaddingTop(padVert >> 1);
+		setPaddingBottom(padVert % 2 == 0 ? padVert >> 1 : (padVert >> 1)+1);
+	}
+	else
+	{
+		setPaddingTop(0);
+		setPaddingBottom(0);
+	}
+}
+
 /* returns true if the given x, y values fall within ALL of the given min and
  * max values for their respective dimensions, false otherwise.
  */

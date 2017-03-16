@@ -45,6 +45,7 @@ namespace winterchange
 			virtual void setPaddingBottom(int) = 0;
 			virtual void setPaddingLeft(int) = 0;
 			virtual void setPaddingRight(int) = 0;
+			virtual void setPaddingToCenterContent(const char*);
 
 			virtual void clearContent() = 0;
 			virtual void refreshContent() = 0;

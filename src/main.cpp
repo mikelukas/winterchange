@@ -73,6 +73,26 @@ int windowFrameworkTest() {
 
 	getch();
 
+	//Test centering ODD-sized content with padding
+	string contentToCenter = "01234 6789 123 567 90\n012345 789012345\n012 4567 90123\n\n\n0123456789 123.\n0.";
+	myWin->setTitle("Centered Content (Odd)");
+	myWin->setPaddingToCenterContent(contentToCenter.c_str());
+	myWin->replaceText(contentToCenter.c_str());
+	myWin->refreshContent(); //This has to be called explicitly to clear out any text that was in the old padding area.
+	doupdate();
+
+	getch();
+
+	//Test centering EVEN-sized content with padding
+	contentToCenter = "01234 6789 123 567 9\n012345 789012345\n012 4567 90123\n\n\n0123456789 123.";
+	myWin->setTitle("Centered Content (Even)");
+	myWin->setPaddingToCenterContent(contentToCenter.c_str());
+	myWin->replaceText(contentToCenter.c_str());
+	myWin->refreshContent(); //Same as above
+	doupdate();
+
+	getch();
+
 	//Test that refreshing content after changing padding observes new sizes
 	myWin->setPadding(5,5,5,5);
 	myWin->setTitle("New Padding");
