@@ -37,14 +37,14 @@ int windowFrameworkTest() {
 	myWin->setWordWrap(true);
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test that that filling with some text lays out properly within horizontal bounds, with margins
 	myWin->setPadding(3, 3, 3, 3);
 	myWin->replaceText("01234 6789 123 567 9 123 5 789. 2345 789012345 789012345678901234567890_2345678901234567 90\n\n0123 56\t89 1234\t6789");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Remove text wrap, to check that text only advances to a new line if an actual \n is encountered
 	myWin->setTitle("No text wrap");
@@ -52,7 +52,7 @@ int windowFrameworkTest() {
 	myWin->refreshContent();
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Turn text wrap back on, ensure text goes back to previous state
 	myWin->setTitle("Wrapping");
@@ -60,19 +60,19 @@ int windowFrameworkTest() {
 	myWin->refreshContent();
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test that text can be appended to the previous content
 	myWin->appendText("abc de fghi.");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test that appended text can be put on new line.
 	myWin->appendText("\nj klmop qrs.");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test padding can be set using percentages
 	myWin->setTitle("Padding %");
@@ -83,7 +83,7 @@ int windowFrameworkTest() {
 	myWin->refreshContent();
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test centering ODD-sized content with padding
 	string contentToCenter = "01234 6789 123 567 90\n012345 789012345\n012 4567 90123\n\n\n0123456789 123.\n0.";
@@ -93,7 +93,7 @@ int windowFrameworkTest() {
 	myWin->refreshContent(); //This has to be called explicitly to clear out any text that was in the old padding area.
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test centering EVEN-sized content with padding
 	contentToCenter = "01234 6789 123 567 9\n012345 789012345\n012 4567 90123\n\n\n0123456789 123.";
@@ -103,7 +103,7 @@ int windowFrameworkTest() {
 	myWin->refreshContent(); //Same as above
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test that refreshing content after changing padding observes new sizes
 	myWin->setPadding(5,5,5,5);
@@ -111,14 +111,14 @@ int windowFrameworkTest() {
 	myWin->refreshContent();
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test resize, no move
 	myWin->resize(20,20);
 	myWin->setTitle("Resize - No Move");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test resize, move
 	myWin->setPadding(3,3,3,3);
@@ -126,14 +126,14 @@ int windowFrameworkTest() {
 	myWin->setTitle("Resize w/ Move");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Shrink to add text in prep for scrolling
 	myWin->resize(35, 10);
 	myWin->setTitle("Shrunken");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test scrolling content by 1 row
 	myWin->scrollDown();
@@ -141,7 +141,7 @@ int windowFrameworkTest() {
 	myWin->setTitle("Scrolled down");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test scrolling content back up 1 row
 	myWin->scrollUp();
@@ -149,7 +149,7 @@ int windowFrameworkTest() {
 	myWin->setTitle("Scrolled up");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test scrolling content to bottom
 	myWin->scrollToBottom();
@@ -157,7 +157,7 @@ int windowFrameworkTest() {
 	myWin->setTitle("Scrolled bottom");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test scrolling content to top
 	myWin->scrollToTop();
@@ -165,7 +165,7 @@ int windowFrameworkTest() {
 	myWin->setTitle("Scrolled top");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test scrolling content right by 1 col
 	myWin->setWordWrap(false);
@@ -174,7 +174,7 @@ int windowFrameworkTest() {
 	myWin->setTitle("Scrolled right");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test scrolling content back left 1 col
 	myWin->scrollLeft();
@@ -182,7 +182,7 @@ int windowFrameworkTest() {
 	myWin->setTitle("Scrolled left");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test scrolling content to right edge
 	myWin->scrollToRightEnd();
@@ -190,7 +190,7 @@ int windowFrameworkTest() {
 	myWin->setTitle("Right end");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test scrolling content back to left edge
 	myWin->scrollToLeftEnd();
@@ -198,7 +198,7 @@ int windowFrameworkTest() {
 	myWin->setTitle("Left end");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test attempt to right-scroll with word-wrap on, which shouldn't work (b/c doesn't make sense)
 	myWin->setWordWrap(true);
@@ -207,75 +207,75 @@ int windowFrameworkTest() {
 	myWin->setTitle("Word-wrap H-scroll");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test maximizing fills the entire console
 	myWin->maximize();
 	myWin->setTitle("Maximized");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test that unmaximizing restores original size AND position of the window.
 	myWin->unmaximize();
 	myWin->setTitle("Unmaximized");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test resizing to size smaller than title
 	myWin->resize(5,5);
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//test that text lays out properly w/i vertical bounds and stops when it can't fit in window any longer
 	myWin->setPadding(0, 0, 0, 0);
 	myWin->replaceText("01234 6 8 0 2 4 6");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//test behavior appending text when there's no room for it
 	myWin->setPadding(0, 0, 0, 0);
 	myWin->appendText("8 0 234 658");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//test filling with shorter text than previous text does not leave any previous text behind
 	myWin->setPadding(0, 0, 0, 0);
 	myWin->replaceText("abcde");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//test that changing padding to be too large for any text clears text
 	myWin->setPadding(50, 50, 50, 50);
 	myWin->replaceText("01234 6 8 0 2 4 6");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test clearing title
 	myWin->setTitle("");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test just move
 	myWin->move(2, 10);
 	myWin->setTitle("Move");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test move out of bounds
 	myWin->move(-2, 10);
 	myWin->setTitle("OOB");
 	doupdate();
 
-	getch();
+	myWin->getInputDelegate()->awaitKey();
 
 	//Test child in top-left corner
 	myWin->resize(20,20, 5, 5);

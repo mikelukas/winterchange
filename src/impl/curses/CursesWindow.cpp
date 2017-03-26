@@ -89,7 +89,7 @@ void CursesWindow::init(const string& content, int w, int h, int x, int y)
 		fillWithText(content, 0, 0);
 	}
 
-	inputDelegate = new CursesInputDelegate(win); //must happen after win is init'd in buildWindow()
+
 }
 
 /* NOTE: rows = height, cols = width, reverse of constructor
@@ -125,17 +125,25 @@ void CursesWindow::buildWindow(int rows, int cols, int row, int col)
 		adjustedCols = COLS - adjustedCol;
 	}
 
-	win = newwin(adjustedRows, adjustedCols, adjustedRow, adjustedCol);
-	box(win, 0, 0); //0,0 is default border characters for horizontal and vertical lines
+	WINDOW* newWin = newwin(adjustedRows, adjustedCols, adjustedRow, adjustedCol);
+	box(newWin, 0, 0); //0,0 is default border characters for horizontal and vertical lines
 	setTitle(*title);
 
 	if(panel == NULL) {
-		panel = new_panel(win);
+		panel = new_panel(newWin);
 	} else {
-		WINDOW* oldwin = panel_window(panel);
-		replace_panel(panel, win);
-		delwin(oldwin);
+		replace_panel(panel, newWin);
 	}
+
+	//Now that our panel has been hooked up to the new window, delete the old one
+	if(win != NULL)
+	{
+		delwin(win);
+		delete inputDelegate; //destroy old InputDelegate for it too
+	}
+
+	win = newWin;
+	inputDelegate = new CursesInputDelegate(win);
 
 	update_panels(); //write new panel to virtual screen
 }
