@@ -1,3 +1,4 @@
+#include "CursesInputDelegate.h"
 #include "CursesWindow.h"
 
 using namespace winterchange;
@@ -55,6 +56,7 @@ CursesWindow::~CursesWindow()
 	delete buffer;
 	del_panel(panel);
 	delwin(win);
+	delete inputDelegate;
 
 	//Update panel system so that it knows the panel has been deleted
 	update_panels();
@@ -78,6 +80,7 @@ void CursesWindow::init(const string& content, int w, int h, int x, int y)
 	title = new string();
 	this->content = new string();
 	buffer = NULL;
+	inputDelegate = NULL;
 
 	buildWindow(h, w, y, x);
 	saveNonMaxedSizeAndPos();
@@ -85,6 +88,8 @@ void CursesWindow::init(const string& content, int w, int h, int x, int y)
 	if(content.length() > 0) {
 		fillWithText(content, 0, 0);
 	}
+
+	inputDelegate = new CursesInputDelegate(win); //must happen after win is init'd in buildWindow()
 }
 
 /* NOTE: rows = height, cols = width, reverse of constructor
@@ -799,6 +804,10 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 	buffer->clearFrom(curRow, curCol);
 
 	flushBuffer();
+
+	//Place cursor back at end of content
+	wmove(win, nextWriteRow+1, nextWriteCol+1);
+	wrefresh(win);
 }
 
 /* Writes character directly into the window, relative to the top-left corner of
@@ -902,4 +911,15 @@ void CursesWindow::flushBuffer()
 	buffer->flushTo(win, 1 + paddingT, 1 + paddingL, scrollRowOffset,scrollColOffset, adjustedW, adjustedH);
 
 	update_panels();
+}
+
+/* Returns pointer to CursesInputDelegate maintained by this CursesWindow. Do
+ * not de-allocate the delegate.
+ *
+ * Access methods on it to get input from this Window.
+ */
+EXTERNAL_FUNC
+InputDelegate* CursesWindow::getInputDelegate()
+{
+	return inputDelegate;
 }

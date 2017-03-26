@@ -3,6 +3,7 @@
 
 #include <string>
 #include <panel.h>
+#include "../../InputDelegate.h"
 #include "../../Window.h"
 #include "CursesWindowBuffer.h"
 
@@ -47,6 +48,8 @@ namespace winterchange
 			string* content;
 
 			CursesWindowBuffer* buffer;
+
+			InputDelegate* inputDelegate;
 
 			virtual void init(const string& content, int w, int h, int x, int y);
 			virtual void buildWindow(int rows, int cols, int row, int col); //note rows = height, cols = width, reverse of constructor
@@ -124,6 +127,8 @@ namespace winterchange
 			virtual Window* makeChildWithContent(const char*);
 			virtual Window* makeChildWithContentCentered(const char*);
 			virtual Window* makeChildWithContent(const char*, int x, int y);
+
+			virtual InputDelegate* getInputDelegate();
 	};
 }
 

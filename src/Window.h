@@ -2,6 +2,7 @@
 #define WINDOW_H_
 
 #include <set>
+#include "InputDelegate.h"
 #include "LibMacros.h"
 
 using std::set;
@@ -87,6 +88,8 @@ namespace winterchange
 
 			virtual Window* getParent() { return parent; }
 			virtual void detachChild(Window*);
+
+			virtual InputDelegate* getInputDelegate() = 0;
 	};
 
 	bool isWithinBounds(int x, int y, int minX, int minY, int maxX, int maxY);

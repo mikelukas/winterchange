@@ -7,6 +7,7 @@ WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
 
 int windowFrameworkTest();
+void inputTests();
 void fittedWindowTests();
 void directWriteTests();
 void bufferTests();
@@ -303,6 +304,8 @@ int windowFrameworkTest() {
 
 	delete myWin;
 
+	inputTests();
+
 	fittedWindowTests();
 
 	directWriteTests();
@@ -322,6 +325,39 @@ int windowFrameworkTest() {
 	endwin();
 
 	return 0;
+}
+
+void inputTests() {
+	Window* inputWindow = new CursesWindow(50,10);
+	inputWindow->setTitle("Input Tests");
+	inputWindow->replaceText("Enter a string (<10): ");
+	doupdate();
+
+	char* str = inputWindow->getInputDelegate()->awaitCString(10);
+
+	inputWindow->replaceText(str);
+	inputWindow->appendText("\nEnter another (>=10): ");
+	doupdate();
+
+	delete str;
+	str = inputWindow->getInputDelegate()->awaitCString(10);
+
+	inputWindow->replaceText(str);
+	inputWindow->appendText("\nEnter one & backspace: ");
+	doupdate();
+
+	delete str;
+	str = inputWindow->getInputDelegate()->awaitCString(10);
+
+	inputWindow->replaceText("Your previous text (any key to move on):\n");
+	inputWindow->appendText(str);
+	inputWindow->appendText("\n");
+	doupdate();
+
+	inputWindow->getInputDelegate()->awaitKey();
+
+	delete str;
+	delete inputWindow;
 }
 
 void fittedWindowTests() {
