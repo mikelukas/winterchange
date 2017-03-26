@@ -814,7 +814,7 @@ void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol
 	flushBuffer();
 
 	//Place cursor back at end of content
-	wmove(win, nextWriteRow+1, nextWriteCol+1);
+	wmove(win, paddingT + nextWriteRow + 1, paddingL + nextWriteCol + 1); //+1 for border
 	wrefresh(win);
 }
 

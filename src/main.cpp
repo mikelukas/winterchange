@@ -349,6 +349,14 @@ void inputTests() {
 	delete str;
 	str = inputWindow->getInputDelegate()->awaitCString(10);
 
+	inputWindow->setPadding(1,1,1,1);
+	inputWindow->replaceText(str);
+	inputWindow->appendText("\nOnce more with padding: ");
+	inputWindow->refreshContent();
+	doupdate();
+
+	str = inputWindow->getInputDelegate()->awaitCString(10);
+
 	inputWindow->replaceText("Your previous text (any key to move on):\n");
 	inputWindow->appendText(str);
 	inputWindow->appendText("\n");
