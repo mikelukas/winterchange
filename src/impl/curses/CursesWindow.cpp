@@ -127,7 +127,6 @@ void CursesWindow::buildWindow(int rows, int cols, int row, int col)
 
 	WINDOW* newWin = newwin(adjustedRows, adjustedCols, adjustedRow, adjustedCol);
 	box(newWin, 0, 0); //0,0 is default border characters for horizontal and vertical lines
-	setTitle(*title);
 
 	if(panel == NULL) {
 		panel = new_panel(newWin);
@@ -143,7 +142,9 @@ void CursesWindow::buildWindow(int rows, int cols, int row, int col)
 	}
 
 	win = newWin;
+	setTitle(*title);
 	inputDelegate = new CursesInputDelegate(win);
+
 
 	update_panels(); //write new panel to virtual screen
 }

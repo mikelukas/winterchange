@@ -210,15 +210,15 @@ int windowFrameworkTest() {
 	myWin->getInputDelegate()->awaitKey();
 
 	//Test maximizing fills the entire console
-	myWin->maximize();
 	myWin->setTitle("Maximized");
+	myWin->maximize();
 	doupdate();
 
 	myWin->getInputDelegate()->awaitKey();
 
 	//Test that unmaximizing restores original size AND position of the window.
-	myWin->unmaximize();
 	myWin->setTitle("Unmaximized");
+	myWin->unmaximize();
 	doupdate();
 
 	myWin->getInputDelegate()->awaitKey();
