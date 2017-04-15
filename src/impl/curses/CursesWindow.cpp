@@ -62,6 +62,7 @@ CursesWindow::~CursesWindow()
 	update_panels();
 }
 
+EXTERNAL_FUNC
 void CursesWindow::init(const string& content, int w, int h, int x, int y)
 {
 	win = NULL;
@@ -100,6 +101,7 @@ void CursesWindow::init(const string& content, int w, int h, int x, int y)
  *
  * Does not update physical screen, just draws to the panel virtual screen.
  */
+EXTERNAL_FUNC
 void CursesWindow::buildWindow(int rows, int cols, int row, int col)
 {
 	if(buffer != NULL)
@@ -291,6 +293,7 @@ void CursesWindow::setTitle(const char* newTitle)
  *
  * Title is truncated if it is longer than the window width.
  */
+EXTERNAL_FUNC
 void CursesWindow::setTitle(const string& newTitle)
 {
 	int widthNoCorners = getWidth()-2; //-2 to avoid writing on corners
@@ -575,6 +578,7 @@ void CursesWindow::scrollDown()
  * than the last row of the buffer, it will be set to the last row, and if it is
  * less than 0, it will be set to 0.
  */
+EXTERNAL_FUNC
 void CursesWindow::vScrollTo(int row)
 {
 	if(row >= buffer->getHeight())
@@ -705,6 +709,7 @@ void CursesWindow::saveNextWriteCoords(int row, int col)
  * If the padding is invalid (negative, or too large such that there is no area
  * for text), clears content area and returns, and still saves given text.
  */
+EXTERNAL_FUNC
 void CursesWindow::fillWithText(const string& text, int offsetRow, int offsetCol)
 {
 	if(paddingT + paddingB > getHeight()-2 || paddingL + paddingR > getWidth()-2)
@@ -913,6 +918,7 @@ void CursesWindow::appendText(const char* text)
  * window.
  * Tells panels to update.
  */
+EXTERNAL_FUNC
 void CursesWindow::flushBuffer()
 {
 	int adjustedW = getWidth()-2 - paddingL - paddingR;

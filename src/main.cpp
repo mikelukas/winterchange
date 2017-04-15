@@ -1,5 +1,6 @@
-#include "impl/curses/CursesWindow.h"
+#include "impl/curses/CursesMenuWindow.h"
 #include "impl/curses/CursesWindowBuffer.h"
+#include "test/TestListDataModel.h"
 
 using namespace winterchange;
 
@@ -11,6 +12,7 @@ void inputTests();
 void fittedWindowTests();
 void directWriteTests();
 void bufferTests();
+void menuTests();
 int window_demo();
 int panel_basic_demo();
 
@@ -310,6 +312,8 @@ int windowFrameworkTest() {
 
 	directWriteTests();
 
+	menuTests();
+
 	//check for hidden windows due to not updating the panel framework
 	mvaddstr(0,0, "Check for uncleared panels");
 	WINDOW* fsWin = newwin(0, 0, 0, 0);
@@ -489,6 +493,39 @@ void bufferTests() {
 
 		getch();
 	}
+}
+
+void menuTests() {
+	vector<string*>* testData = new vector<string*>();
+	testData->push_back(new string("Menu item 1"));
+	testData->push_back(new string("Menu item 2"));
+	testData->push_back(new string("Menu item 3"));
+
+	MenuDataModel<string*>* testDataModel = new TestListDataModel(testData);
+
+	Window* menu = new CursesMenuWindow<string*>(30, 30, testDataModel, &testTransformFunc);
+	menu->setTitle("Menu Test");
+ 	menu->redraw();
+
+	getch();
+
+	testDataModel->toggleSelected(0);
+	menu->redraw();
+
+	getch();
+
+	testDataModel->toggleSelected(1);
+	menu->redraw();
+
+	getch();
+
+	for(int i = 0; i < testData->size(); i++)
+	{
+		delete (*testData)[i];
+	}
+
+	delete testData;
+	delete menu;
 }
 
 int window_demo() {
