@@ -4,7 +4,6 @@
 using namespace winterchange;
 
 template <typename T>
-EXTERNAL_FUNC
 Menu<T>::Menu()
 	: dataModel(NULL),
 	  dataView(NULL)
@@ -13,7 +12,6 @@ Menu<T>::Menu()
 }
 
 template <typename T>
-EXTERNAL_FUNC
 Menu<T>::Menu(MenuDataModel<T>* dataModel, MenuDataView<T>* dataView)
 	: dataModel(dataModel),
 	  dataView(dataView)
@@ -27,7 +25,6 @@ Menu<T>::Menu(MenuDataModel<T>* dataModel, MenuDataView<T>* dataView)
  * manage lifecycle of provided models.
  */
 template <typename T>
-EXTERNAL_FUNC
 void Menu<T>::setData(MenuDataModel<T>* dataModel)
 {
 	this->dataModel = dataModel;
@@ -39,7 +36,6 @@ void Menu<T>::setData(MenuDataModel<T>* dataModel)
  * manage lifecycle of provided views.
  */
 template <typename T>
-EXTERNAL_FUNC
 void Menu<T>::setDataView(MenuDataView<T>* dataView)
 {
 	this->dataView = dataView;

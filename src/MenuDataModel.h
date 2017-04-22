@@ -14,7 +14,7 @@ namespace winterchange
 	 * display.
 	 */
 	template <typename T>
-	class EXTERNAL_CLASS MenuDataModel
+	class MenuDataModel
 	{
 		public:
 			MenuDataModel() {}

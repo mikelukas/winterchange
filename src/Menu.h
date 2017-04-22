@@ -16,7 +16,7 @@ namespace winterchange
 	 * implement, then call drawAllData();
 	 */
 	template <typename T>
-	class EXTERNAL_CLASS Menu
+	class Menu
 	{
 		protected:
 			MenuDataModel<T>* dataModel;

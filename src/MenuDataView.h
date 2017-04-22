@@ -9,7 +9,7 @@ namespace winterchange
 	 * abstract how data is stored from how it is displayed.
 	 */
 	template <typename T>
-	class EXTERNAL_CLASS MenuDataView
+	class MenuDataView
 	{
 		public:
 			MenuDataView() {}
