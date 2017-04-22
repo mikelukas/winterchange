@@ -8,7 +8,7 @@ namespace winterchange
 {
 	/* CursesWindow that can display the given data as a menu. */
 	template <typename T>
-	class EXTERNAL_CLASS CursesMenuWindow: public CursesWindow, public MenuDataView<T>
+	class CursesMenuWindow: public CursesWindow, public MenuDataView<T>
 	{
 		protected:
 			Menu<T> menu;

@@ -10,7 +10,7 @@
 			#define EXTERNAL_FUNC __declspec(dllexport)
 		#else
 			// Symbolic name for visibility("default") attribute.
-			#define EXTERNAL_CLASS
+			#define EXTERNAL_CLASS __attribute__((visibility("default")))
 			#define EXTERNAL_FUNC __attribute__((visibility("default")))
 		#endif
 	#else
