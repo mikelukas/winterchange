@@ -3,7 +3,6 @@
 using namespace winterchange;
 
 template <typename T>
-EXTERNAL_FUNC
 CursesMenuWindow<T>::CursesMenuWindow(int w, int h, MenuDataModel<T>* data, char* (*dataToString)(T))
 	: CursesWindow(w, h),
 	  menu(data, this),
@@ -16,7 +15,6 @@ CursesMenuWindow<T>::CursesMenuWindow(int w, int h, MenuDataModel<T>* data, char
  * drawData() method for each menu item.
  */
 template <typename T>
-EXTERNAL_FUNC
 void CursesMenuWindow<T>::redraw()
 {
 	menu.drawAllData();
@@ -25,7 +23,6 @@ void CursesMenuWindow<T>::redraw()
 
 /* Draws one menu datum into the window, highlighting it if it's selected.*/
 template <typename T>
-EXTERNAL_FUNC
 void CursesMenuWindow<T>::drawData(T data, int position, bool selected)
 {
 	//If selected, we want to highlight the option by reversing video

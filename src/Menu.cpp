@@ -49,7 +49,6 @@ void Menu<T>::setDataView(MenuDataView<T>* dataView)
  * are NULL. In the latter case, calling this method does nothing.
  */
 template <typename T>
-EXTERNAL_FUNC
 void Menu<T>::drawAllData()
 {
 	if(dataModel == NULL || dataView == NULL)
