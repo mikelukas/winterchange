@@ -11,6 +11,7 @@
 
 ### Visual Studio Files ###
 # User-specific files
+.vs
 *.suo
 *.user
 
