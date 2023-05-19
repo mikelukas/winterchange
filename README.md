@@ -44,7 +44,7 @@ If build is successful, `libwinterchange.dylib` library should be placed in the 
 ### Windows
 
 Pre-requisites:
-- Visual Studio 2015 or 2019 Community Edition (may build in other versions/editions but have only tested these).
+- Visual Studio 2022 Community Edition.
 
 1. Go to File -> Open -> Project/Solution
 2. Browse to the folder to which you cloned winterchange, and choose the `winterchange.sln` file, and click Open.
